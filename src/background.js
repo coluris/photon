@@ -11,7 +11,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
-
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -19,7 +18,7 @@ async function createWindow() {
     height: 675,
     minWidth: 960,
     minHeight: 540,
-    frame: false,
+    titleBarStyle: 'hidden',
     webPreferences: {
       
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -30,7 +29,7 @@ async function createWindow() {
       preload: path.resolve(__static, 'preload.js'),
     }
   })
-
+  
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -56,19 +55,31 @@ async function createWindow() {
       case 'fullscreenOff':
         win.setFullScreen(false);
         break;
+      case 'isFullscreen':
+        event.reply('menu', win.isFullScreen());
+        break;
     }
   
   })
-}
 
+  win.on('enter-full-screen', () => {
+    win.webContents.send('size', win.isFullScreen());
+  });
+
+  win.on('leave-full-screen', () => {
+    win.webContents.send('size', win.isFullScreen());
+  });
+  
+}
+ipcMain.on('platform', (event) => {
+  event.reply('platform', process.platform)
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
     app.quit()
-  }
 })
 
 app.on('activate', () => {

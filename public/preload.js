@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-const validChannels = ['menu'];
+const validChannels = ['menu', 'platform', 'size'];
 contextBridge.exposeInMainWorld(
   'ipc', {
     send: (channel, data) => {
