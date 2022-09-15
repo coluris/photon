@@ -15,7 +15,11 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "electron-builder": "^23.0.2",
-    "vue": "^3.2.13"
+    "vue": "^3.2.13",
+    "yarn": "^1.22.19"
+  },
+  "resolutions": {
+    "electron-builder": "^23.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
