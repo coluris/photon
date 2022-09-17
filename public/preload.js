@@ -1,18 +1,16 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require("electron");
 
-const validChannels = ['menu', 'platform', 'size'];
-contextBridge.exposeInMainWorld(
-  'ipc', {
-    send: (channel, data) => {
-      if (validChannels.includes(channel)) {
-        ipcRenderer.send(channel, data);
-      }
-    },
-    on: (channel, func) => {
-      if (validChannels.includes(channel)) {
-        // Strip event as it includes `sender` and is a security risk
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
-      }
-    },
+const validChannels = ["menu", "platform", "size"];
+contextBridge.exposeInMainWorld("ipc", {
+  send: (channel, data) => {
+    if (validChannels.includes(channel)) {
+      ipcRenderer.send(channel, data);
+    }
   },
-);
+  on: (channel, func) => {
+    if (validChannels.includes(channel)) {
+      // Strip event as it includes `sender` and is a security risk
+      ipcRenderer.on(channel, (event, ...args) => func(...args));
+    }
+  },
+});
