@@ -16,12 +16,15 @@
     "core-js": "^3.8.3",
     "electron-builder": "^23.0.2",
     "element-plus": "^2.2.17",
+    "serialport": "^10.4.0",
     "vue": "^3.2.13",
     "yarn": "^1.22.19"
   },
   "resolutions": {
     "electron-builder": "^23.0.2",
-    "electron": "^20.1.4"
+    "electron": "^20.1.4",
+    "glob-parent": "^5.1.2",
+    "got": "^11.8.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
