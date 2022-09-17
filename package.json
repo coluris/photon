@@ -36,7 +36,9 @@
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "vue-cli-plugin-electron-builder": "^2.1.1"
+    "vue-cli-plugin-electron-builder": "^2.1.1",
+    "glob-parent": ">=5.1.2",
+    "got": ">=11.8.5"
   },
   "browserslist": [
     "> 1%",
