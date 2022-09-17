@@ -23,8 +23,8 @@
   "resolutions": {
     "electron-builder": "^23.0.2",
     "electron": "^20.1.4",
-    "glob-parent": "^5.1.2",
-    "got": "^11.8.5"
+    "glob-parent": ">=5.1.2",
+    "got": ">=11.8.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
