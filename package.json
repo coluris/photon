@@ -16,15 +16,18 @@
     "core-js": "^3.8.3",
     "electron-builder": "^23.0.2",
     "element-plus": "^2.2.17",
+    "midi": "^2.0.0",
+    "node-gyp": "^9.1.0",
     "serialport": "^10.4.0",
     "vue": "^3.2.13",
     "yarn": "^1.22.19"
   },
   "resolutions": {
     "electron-builder": "^23.0.2",
-    "electron": "^20.1.4",
+    "electron": "^19.0.10",
     "glob-parent": ">=5.1.2",
-    "got": ">=11.8.5"
+    "got": ">=11.8.5",
+    "node-gyp": "^9.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -32,13 +35,13 @@
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
-    "electron": "^20.1.4",
+    "electron": "^19.0.10",
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "vue-cli-plugin-electron-builder": "^2.1.1",
     "glob-parent": ">=5.1.2",
-    "got": ">=11.8.5"
+    "got": ">=11.8.5",
+    "vue-cli-plugin-electron-builder": "^2.1.1"
   },
   "browserslist": [
     "> 1%",
