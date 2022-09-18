@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-const validChannels = ["menu", "platform", "size"];
+const validChannels = ["menu", "platform", "size", "midi"];
 contextBridge.exposeInMainWorld("ipc", {
   send: (channel, data) => {
     if (validChannels.includes(channel)) {

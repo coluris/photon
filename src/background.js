@@ -6,7 +6,8 @@ import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 const path = require("path");
 const { ipcMain } = require("electron");
 const isDevelopment = process.env.NODE_ENV !== "production";
-
+const midi = require("midi");
+const midiListener = new midi.Input();
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
@@ -67,9 +68,16 @@ async function createWindow() {
     win.webContents.send("size", win.isFullScreen());
   });
 }
+
+ipcMain.on("midi", (event) => {
+  console.log(midiListener);
+  event.reply("midi", midiListener.getPortCount());
+});
+
 ipcMain.on("platform", (event) => {
   event.reply("platform", process.platform);
 });
+
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {

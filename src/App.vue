@@ -6,7 +6,11 @@
     </div>
     <div class="main">
       <div class="sidebar">
-        <color-picker class="sb-color" />
+        <div class="sb-color">
+          <div class="sb-color-container">
+            <color-picker />
+      </div>
+      </div>
       </div>
       <div class="canvas" @click.self="selectCanvas">
         <fixture-item
@@ -27,7 +31,9 @@
 import WinTitleBar from "./components/title-bar/WinTitleBar";
 import MacTitleBar from "./components/title-bar/MacTitleBar";
 import FixtureItem from "./components/items/FixtureItem";
-import ColorPicker from "./components/sidebar/ColorPicker";
+import ColorPicker from "./components/sidebar/ColorPicker"
+
+
 export default {
   name: "App",
   components: {
@@ -41,6 +47,7 @@ export default {
       platform: "",
       fullscreen: false,
       canvasScale: 2,
+      midiListener: null,
     };
   },
   methods: {
@@ -52,6 +59,9 @@ export default {
       e.preventDefault();
       this.$refs.fix.forEach((item) => item.$el.classList.remove("select"));
     },
+    updateValue (value) {
+      this.colors = value
+    }
   },
 
   beforeMount() {
@@ -61,7 +71,15 @@ export default {
     window.ipc.on("size", (payload) => {
       this.fullscreen = payload;
     });
+    
     window.ipc.send("platform");
+  },
+  mounted(){
+    window.ipc.send("midi");
+    window.ipc.on("midi", (payload) => {
+      this.midiListener = payload;
+      console.log(this.midiListener);
+    })
   },
   computed: {
     platformName() {
@@ -129,5 +147,14 @@ body {
 .sb-color {
   width: 100%;
   height: 25%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.sb-color-container{
+  height: 80%;
+  width: 80%;
+}
+
 </style>
