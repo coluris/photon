@@ -1,4 +1,4 @@
-# Photon
+![photon-logo](https://raw.githubusercontent.com/coluris/photon/main/photon.png)
 
 Electron-based open-source lighting software
 
