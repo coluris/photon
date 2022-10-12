@@ -1,4 +1,4 @@
-![photon-logo](https://raw.githubusercontent.com/coluris/photon/main/photon_icon.png)
+![photon-logo](https://raw.githubusercontent.com/coluris/photon/main/public/photon_icon.png)
 # Setup
 
 **As of October 2022, `vue-cli-plugin-electron-builder` relies on an outdated version of `electron-builder`.**
