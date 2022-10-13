@@ -1,12 +1,12 @@
-import WinTitleBar from '../components/title-bar/WinTitleBar.vue';
-import MacTitleBar from '../components/title-bar/MacTitleBar.vue';
+import WinTitleBar from "../components/title-bar/WinTitleBar.vue";
+import MacTitleBar from "../components/title-bar/MacTitleBar.vue";
 
 export default {
-  title: 'Example/TitleBar',
+  title: "TitleBar/TitleBar",
   component: WinTitleBar,
   parameters: {
     // More on Story layout: https://storybook.js.org/docs/vue/configure/story-layout
-    layout: 'fullscreen',
+    layout: "fullscreen",
   },
 };
 
@@ -15,7 +15,7 @@ const WinTitleBarTemplate = () => ({
   components: { WinTitleBar },
 
   // Here we define the `template`
-  template: '<win-title-bar />',
+  template: "<win-title-bar />",
 });
 
 const MacTitleBarTemplate = () => ({
@@ -23,7 +23,7 @@ const MacTitleBarTemplate = () => ({
   components: { MacTitleBar },
 
   // Here we define the `template`
-  template: '<mac-title-bar />',
+  template: "<mac-title-bar />",
 });
 
 export const Windows = WinTitleBarTemplate.bind({});

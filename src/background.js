@@ -20,7 +20,7 @@ async function createWindow() {
     minWidth: 960,
     minHeight: 540,
     titleBarStyle: "hidden",
-    icon: 'public/icon.ico',
+    icon: "public/icon.ico",
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,

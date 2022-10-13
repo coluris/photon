@@ -1,6 +1,9 @@
 <template>
   <div class="app">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Inter"
+    />
     <div class="title-bar">
       <win-title-bar v-if="platform === 'win32'" />
       <mac-title-bar v-if="platform === 'darwin' && !fullscreen" />

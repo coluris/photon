@@ -1,12 +1,17 @@
 <template>
   <div class="top-bar">
     <div class="menu-items">
-      <button class="menu-item">File</button>
-      <button class="menu-item">Edit</button>
-      <button class="menu-item">View</button>
-      <button class="menu-item">Show</button>
-      <button class="menu-item">Cue</button>
-      <button class="menu-item">Fixture</button>
+      <button
+        v-for="option in menuOptions"
+        :key="option.toLowerCase()"
+        :ref="option.toLowerCase()"
+        class="menu-item"
+        @mouseover="show(option.toLowerCase())"
+        @click="showMenu = !showMenu"
+        @focusout="showMenu = false"
+      >
+        {{ option }}
+      </button>
     </div>
     <div class="drag-title-area">
       <p>Photon — SHOW NAME</p>
@@ -81,37 +86,77 @@
         </svg>
       </button>
     </div>
+    <dropdown-menu
+      ref="dropdown"
+      v-show="showMenu"
+      class="dropdown-menu"
+      :options="options"
+    />
   </div>
 </template>
 
 <script>
+import DropdownMenu from "@/components/dropdown/DropdownMenu";
 export default {
   name: "WinTitleBar",
+  components: {
+    DropdownMenu,
+  },
   methods: {
     closeApp() {
-      window.ipc.send("menu", "close");
+      if (window.ipc) window.ipc.send("menu", "close");
+    },
+    show(menuOption) {
+      const dropdown = this.$refs["dropdown"].$el;
+      const element = this.$refs[menuOption][0];
+      dropdown.style.left = `${element.getBoundingClientRect().x}px`;
+      dropdown.style.top = `25px`;
+      switch (menuOption) {
+        case "file":
+          this.options = [
+            ["New Show", "Save Show", "Close Show"],
+            ["Open Show"],
+          ];
+          break;
+        case "edit":
+          this.options = [["Edit Option 1", "Edit Option 2"]];
+          break;
+        default:
+          break;
+      }
     },
     toggleFullscreen() {
-      if (!this.fullscreen) {
-        window.ipc.send("menu", "fullscreenOn");
-      } else {
-        window.ipc.send("menu", "fullscreenOff");
+      if (window.ipc) {
+        if (!this.fullscreen) {
+          window.ipc.send("menu", "fullscreenOn");
+        } else {
+          window.ipc.send("menu", "fullscreenOff");
+        }
+        this.fullscreen = !this.fullscreen;
       }
-      this.fullscreen = !this.fullscreen;
     },
     minimize() {
-      window.ipc.send("menu", "minimize");
+      if (window.ipc) {
+        window.ipc.send("menu", "minimize");
+      }
     },
   },
   data() {
     return {
       fullscreen: false,
+      options: [["Hello"]],
+      showMenu: false,
+      menuOptions: ["File", "Edit", "View", "Show", "Cue", "Fixture"],
     };
   },
 };
 </script>
 
 <style scope>
+.dropdown-menu {
+  position: absolute;
+  z-index: 10;
+}
 .menu-items {
   display: flex;
   margin-left: 25px;
