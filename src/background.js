@@ -1,6 +1,6 @@
 "use strict";
 
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, screen } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 const path = require("path");
@@ -20,9 +20,8 @@ async function createWindow() {
     minWidth: 960,
     minHeight: 540,
     titleBarStyle: "hidden",
+    icon: 'public/icon.ico',
     webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       enableRemoteModule: false,
@@ -69,15 +68,28 @@ async function createWindow() {
   });
 }
 
+ipcMain.on("info", (event, payload) => {
+  switch (payload) {
+    case "resolution":
+      event.reply("info", {
+        header: "resolution",
+        data: {
+          width: screen.availWidth,
+          height: screen.availHeight,
+        },
+      });
+      break;
+  }
+});
+
 ipcMain.on("midi", (event) => {
-  console.log(midiListener);
+  console.log(midiListener.getPortName(0));
   event.reply("midi", midiListener.getPortCount());
 });
 
 ipcMain.on("platform", (event) => {
   event.reply("platform", process.platform);
 });
-
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {

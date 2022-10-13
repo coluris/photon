@@ -7,7 +7,7 @@
             width: ${3 * scale}vh;
             `"
   >
-    <div class="head" />
+    <div class="head" :style="`background-color: ${data.color}`" />
   </div>
 </template>
 
@@ -25,6 +25,10 @@ export default {
     scale: {
       type: Number,
       default: 1,
+    },
+    data: {
+      type: Object,
+      required: true,
     },
   },
 };
@@ -48,7 +52,6 @@ export default {
   height: 75%;
   width: 75%;
   border-radius: 50%;
-  background-color: greenyellow;
   border: solid 0.1vh black;
   position: relative;
 }

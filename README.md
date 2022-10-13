@@ -1,12 +1,9 @@
 ![photon-logo](https://raw.githubusercontent.com/coluris/photon/main/public/photon_icon.png)
+
 # Setup
 
-**As of October 2022, `vue-cli-plugin-electron-builder` relies on an outdated version of `electron-builder`.**
-
-Start by installing `yarn` by running `npm install --global yarn`. Then you can go ahead and install the modules using
-
 ```
-yarn install
+npm install
 ```
 
 You're good to go!
@@ -27,6 +24,12 @@ npm run electron:build
 
 ```
 npm run lint
+```
+
+# Runs Storybook to view UI components
+
+```
+npm run storybook
 ```
 
 # Customize configuration

@@ -1,6 +1,6 @@
 <template>
-  <div class="top-bar">
-    <div class="drag-title-area">
+  <div class="mac-top-bar">
+    <div class="mac-drag-title-area">
       <p>Photon — New Show</p>
     </div>
   </div>
@@ -9,66 +9,35 @@
 <script>
 export default {
   name: "MacTitleBar",
+
+  props: {
+    resolution: {
+      required: true,
+      type: Object,
+    },
+  },
 };
 </script>
 
 <style scope>
-.top-bar {
+.mac-top-bar {
   height: 30px;
   width: 100%;
-  background-color: #1e2029;
+  background-color: #d9d9d9;
   display: flex;
 }
-.drag-title-area {
+.mag-drag-title-area {
   -webkit-app-region: drag;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   font-size: 0.8125rem;
-  color: #c2c4c7;
+  color: #000000;
 }
 .buffer {
   -webkit-app-region: drag;
   height: 100%;
   width: 225px;
-}
-.close-button {
-  height: 100%;
-  width: 75px;
-  border: none;
-  background-color: inherit;
-  transition: 0.2s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.close-button:hover {
-  background-color: red;
-}
-.close-button:active {
-  background-color: rgb(161, 0, 0);
-}
-
-.menu-button {
-  height: 100%;
-  width: 75px;
-  border: none;
-  background-color: inherit;
-  transition: 0.2s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.menu-button:hover {
-  background-color: #363a4b;
-}
-.menu-button:active {
-  background-color: #484d65;
-}
-.rest {
-  font-family: Arial;
-  font-size: 3rem;
-  color: white;
 }
 </style>
