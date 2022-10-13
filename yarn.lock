@@ -4533,7 +4533,7 @@ download-git-repo@^3.0.2:
   integrity sha512-N8hWXD4hXqmEcNoR8TBYFntaOcYvEQ7Bz90mgm3bZRTuteGQqwT32VDMnTyD0KTEvb8BWrMc1tVmzuV9u/WrAg==
   dependencies:
     download "^7.1.0"
-    git-clone "^0.2.0"
+    git-clone "^0.1.0"
     rimraf "^3.0.0"
 
 download@^7.1.0:
@@ -5652,7 +5652,7 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
-git-clone@>=0.2.0:
+git-clone@>=0.2.0, git-clone@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/git-clone/-/git-clone-0.2.0.tgz#9dce00facbab227d2562150052cd4a3a7ec15c41"
   integrity sha512-1UAkEPIFbyjHaddljUKvPhhLRnrKaImT71T7rdvSvWLXw95nLdhdi6Qmlx0KOWoV1qqvHGLq5lMLJEZM0JXk8A==
