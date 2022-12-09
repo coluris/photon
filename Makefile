@@ -1,7 +1,7 @@
 ifeq ($(OS),Windows_NT)
 	MESSAGE = "Building for Windows..."
 	CC_ARGS = -lws2_32
-	CPP_ARGS = "-static-libstdc++ -static-libgcc -lws2_32 -liphlpapi -O2"
+	CPP_ARGS = -static-libstdc++ -static-libgcc -lws2_32 -liphlpapi -O2
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
@@ -10,7 +10,7 @@ else
 	ifeq ($(UNAME_S),Darwin)
 		MESSAGE = "Building Photon for MacOS..."
 		CC_ARGS = 
-		CPP_ARGS = -lc++ -O2
+		CPP_ARGS = -lc++ -std=c++17 -O2
 	endif
 endif
 .PHONY: install
@@ -32,7 +32,7 @@ build-c:
 	@-echo $(MESSAGE)
 	gcc -c ./src/PhotonDMXHandler/artnet/*.c $(CC_ARGS)
 	mv *.o ./src/PhotonDMXHandler/artnet/
-	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./src/PhotonDMXHandler/artnet/*.o -I ./include -I ./src/PhotonDMXHandler/artnet -std=c++17 $(CPP_ARGS)
+	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./src/PhotonDMXHandler/artnet/*.o -I ./include -I ./src/PhotonDMXHandler/artnet $(CPP_ARGS)
 .PHONY: cleaninstall
 cleaninstall:
 	npm ci
