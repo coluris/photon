@@ -13,6 +13,7 @@ node_modules
 # local builds
 *.exe
 *.o
+PhotonDMXHandler
 
 # Log files
 npm-debug.log*
