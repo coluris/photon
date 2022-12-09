@@ -31,6 +31,10 @@ inline int printLog(std::string message, Logger::LOG_TYPE logType = Logger::INFO
     case Logger::WARN:
         color = "\e[1;33m";
         break;
+    
+    case Logger::FATAL:
+        std::cerr << "\e[1;31m" << message << "\e[0m" << std::endl;
+        return 0;
     }
     std::cout << color << message << "\e[0m" << std::endl;
     return 0;

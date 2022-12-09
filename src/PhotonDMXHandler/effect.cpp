@@ -47,6 +47,9 @@ void Effect::processEffect()
     case SAW:
         resolveSawtooth(tick);
         break;
+    case CUSTOM:
+        resolveCustom(tick);
+        break;
     }
 }
 

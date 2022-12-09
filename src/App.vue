@@ -5,8 +5,8 @@
       href="https://fonts.googleapis.com/css?family=Inter"
     />
     <div class="title-bar">
-      <win-title-bar v-if="platform === 'win32'" />
-      <mac-title-bar v-if="platform === 'darwin' && !fullscreen" />
+      <win-title-bar/>
+      <!-- <mac-title-bar v-if="platform === 'darwin' && !fullscreen" /> -->
     </div>
     <div class="main">
       <div class="sidebar" />
@@ -22,14 +22,14 @@
 
 <script>
 import WinTitleBar from "./components/title-bar/WinTitleBar";
-import MacTitleBar from "./components/title-bar/MacTitleBar";
+// import MacTitleBar from "./components/title-bar/MacTitleBar";
 import PCanvas from "./components/canvas/PCanvas";
 
 export default {
   name: "App",
   components: {
     WinTitleBar,
-    MacTitleBar,
+    // MacTitleBar,
     PCanvas,
   },
   data() {

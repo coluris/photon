@@ -3,6 +3,7 @@
 #include <json/json.hpp>
 #include "logger.h"
 #include "universe.h"
+#include <filesystem>
 using json = nlohmann::json;
 
 std::map<Fixture::ATTR_TYPES, std::string> Fixture::attr_type_names =
@@ -41,7 +42,8 @@ Fixture::~Fixture()
 
 void Fixture::loadFixtureFromFile()
 {
-    std::fstream fixFile(("Fixtures\\" + fileName + ".phix").c_str());
+    auto path = std::filesystem::canonical("./Fixtures/");
+    std::fstream fixFile((path.string() + "/" + fileName + ".phix").c_str());
     json fixData = json::parse(fixFile);
     for (auto entry : fixData["channels"].items())
     {

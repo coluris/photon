@@ -13,23 +13,27 @@ InternalManager::~InternalManager()
 
 void InternalManager::begin()
 {
-    alive = true;
+    this->alive = true;
 }
 void InternalManager::close()
 {
+    this->alive = false;
 }
 void InternalManager::pushData()
 {
-    int universe = 0;
-    for (Universe *u : UniverseManager::getUniverses())
+    if(this->alive)
     {
-        sendMessage("pkt[" + std::to_string(universe) + "]" + u->getDataAsString());
-        universe++;
+        int universe = 0;
+        for (Universe *u : UniverseManager::getUniverses())
+        {
+            sendMessage("pkt[" + std::to_string(universe) + "]" + u->getDataAsString());
+            universe++;
+        }
     }
 }
 bool InternalManager::hasBegun()
 {
-    return alive;
+    return this->alive;
 }
 
 bool InternalManager::setRouting(int internalUniverse, int outputUniverse)

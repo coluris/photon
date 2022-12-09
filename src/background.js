@@ -13,7 +13,8 @@ const midi = require("midi");
 const midiListener = new midi.Input();
 const backend = require("child_process");
 const FRAME_RATE = 40;
-const runner = backend.spawn("PhotonDMXHandler", {
+const backend_file = process == "win32" ? "PhotonDMXHandler" : "./PhotonDMXHandler";
+const runner = backend.spawn(backend_file, {
   stdio: ["pipe", "pipe", "pipe"],
 });
 let showData = {};
