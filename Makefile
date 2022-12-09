@@ -29,7 +29,7 @@ build:
 	npm run electron:build
 .PHONY: build-c
 build-c:
-	echo $(MESSAGE)
+	@-echo $(MESSAGE)
 	gcc -c ./src/PhotonDMXHandler/artnet/*.c $(CC_ARGS)
 	mv *.o ./src/PhotonDMXHandler/artnet/
 	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./src/PhotonDMXHandler/artnet/*.o -I ./include -I ./src/PhotonDMXHandler/artnet -std=c++17 $(CPP_ARGS)
