@@ -1,11 +1,18 @@
 .DS_Store
 node_modules
 /dist
-
+/logs
+/Effects
+/Fixtures
+/Shows
 
 # local env files
 .env.local
 .env.*.local
+
+# local builds
+*.exe
+*.o
 
 # Log files
 npm-debug.log*
@@ -24,3 +31,4 @@ pnpm-debug.log*
 
 #Electron-builder output
 /dist_electron
+

@@ -1,6 +1,17 @@
 const { contextBridge, ipcRenderer } = require("electron");
-
-const validChannels = ["menu", "platform", "size", "midi", "info"];
+const fs = require("fs");
+const path = require("path");
+const validChannels = [
+  "menu",
+  "platform",
+  "size",
+  "midi",
+  "info",
+  "backend",
+  "show",
+  "universe",
+  "fixture",
+];
 contextBridge.exposeInMainWorld("ipc", {
   send: (channel, data) => {
     if (validChannels.includes(channel)) {
@@ -12,5 +23,11 @@ contextBridge.exposeInMainWorld("ipc", {
       // Strip event as it includes `sender` and is a security risk
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }
+  },
+  openFixtureFile: (fixtureName) => {
+    return fs.readFileSync(
+      path.resolve(__dirname, "../Fixtures", fixtureName) + ".phix",
+      "utf-8"
+    );
   },
 });

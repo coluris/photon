@@ -10,7 +10,12 @@
     </div>
     <div class="main">
       <div class="sidebar" />
-      <p-canvas></p-canvas>
+      <p-canvas
+        :fixtures="showData.fixtures"
+        :layout="showData.layouts"
+        :cuelists="showData.cuelists"
+        :universes="universes"
+      ></p-canvas>
     </div>
   </div>
 </template>
@@ -34,6 +39,12 @@ export default {
       canvasScale: 2,
       midiListener: null,
       value: "#ffffff",
+      showData: {
+        fixtures: {},
+        layouts: {},
+        cuelists: {},
+      },
+      universes: {},
     };
   },
   methods: {
@@ -57,6 +68,9 @@ export default {
     window.ipc.on("size", (payload) => {
       this.fullscreen = payload;
     });
+    window.ipc.on("show", (payload) => {
+      this.showData = payload;
+    });
 
     window.ipc.on("info", (payload) => {
       switch (payload.header) {
@@ -65,14 +79,16 @@ export default {
           break;
       }
     });
-
+    window.ipc.on("universe", (payload) => {
+      this.universes = payload;
+    });
     window.ipc.send("platform");
   },
   mounted() {
     window.ipc.send("midi");
+    window.ipc.send("backend", { command: "hello", data: "test" });
     window.ipc.on("midi", (payload) => {
       this.midiListener = payload;
-      console.log(this.midiListener);
     });
   },
   computed: {

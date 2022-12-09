@@ -1,13 +1,24 @@
 "use strict";
 
-import { app, protocol, BrowserWindow, screen } from "electron";
+import { app, protocol, BrowserWindow, screen, dialog } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import { SerialPort } from "serialport";
+
+const fs = require("fs");
 const path = require("path");
 const { ipcMain } = require("electron");
 const isDevelopment = process.env.NODE_ENV !== "production";
 const midi = require("midi");
 const midiListener = new midi.Input();
+const backend = require("child_process");
+const FRAME_RATE = 40;
+const runner = backend.spawn("PhotonDMXHandler", {
+  stdio: ["pipe", "pipe", "pipe"],
+});
+let showData = {};
+let universeData = {};
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
@@ -56,9 +67,32 @@ async function createWindow() {
       case "isFullscreen":
         event.reply("menu", win.isFullScreen());
         break;
+      case "fileOpen": {
+        const showFileDialog = dialog.showOpenDialogSync({
+          properties: ["openFile"],
+          filters: [{ name: "Photon Show Files", extensions: ["pshow"] }],
+        });
+        if (showFileDialog === undefined) {
+          break;
+        }
+        const showFile = showFileDialog[0];
+        showData = JSON.parse(fs.readFileSync(showFile, "utf8"));
+        win.webContents.send("show", showData);
+        sendProcMessage("ldshow", showFile);
+        sendProcMessage("artnet", "169.254.158.174");
+        break;
+      }
+      case "nextCue":
+        sendProcMessage("nextcue");
+        break;
     }
   });
-
+  ipcMain.on("fixture", (event, payload) => {
+    sendProcMessage(
+      "fedit",
+      `${payload.fixtures}|${payload.attr}|${payload.value}`
+    );
+  });
   win.on("enter-full-screen", () => {
     win.webContents.send("size", win.isFullScreen());
   });
@@ -66,6 +100,41 @@ async function createWindow() {
   win.on("leave-full-screen", () => {
     win.webContents.send("size", win.isFullScreen());
   });
+  await SerialPort.list().then((/*ports*/) => {
+    // console.log("ports", ports);
+  });
+
+  runner.stderr.on("data", (data) => {
+    console.log(data.toString());
+  });
+
+  runner.stdout.on("data", (data) => {
+    const messages = data.toString().split("\n").slice(0, -1);
+    for (const x in messages) {
+      if (messages[x].slice(0, 3) === "@p!") {
+        const command = messages[x].split("@p!")[1].split(";")[0];
+        processCommand(command);
+      } else {
+        console.log(messages[x]);
+      }
+    }
+  });
+  function processCommand(command) {
+    try {
+      if (command.slice(0, 3) === "pkt") {
+        const cmd_split = command.split("]");
+        const universe = parseInt(cmd_split[0].split("[")[1], 10);
+        const data = cmd_split[1].split(",").map((x) => parseInt(x, 10));
+        universeData[universe] = data;
+        if (universe === 0) {
+          win.webContents.send("universe", universeData);
+        }
+      }
+    } catch (e) {
+      // do nothing lmao
+    }
+  }
+  initBackend();
 }
 
 ipcMain.on("info", (event, payload) => {
@@ -83,8 +152,12 @@ ipcMain.on("info", (event, payload) => {
 });
 
 ipcMain.on("midi", (event) => {
-  console.log(midiListener.getPortName(0));
+  // console.log(midiListener.getPortName(0));
   event.reply("midi", midiListener.getPortCount());
+});
+
+ipcMain.on("backend", (event, payload) => {
+  sendProcMessage(payload.command, payload.data);
 });
 
 ipcMain.on("platform", (event) => {
@@ -95,6 +168,9 @@ ipcMain.on("platform", (event) => {
 app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
+  runner.stdout.end();
+  runner.stdin.end();
+  runner.kill();
   app.quit();
 });
 
@@ -124,12 +200,29 @@ if (isDevelopment) {
   if (process.platform === "win32") {
     process.on("message", (data) => {
       if (data === "graceful-exit") {
+        runner.stdout.end();
+        runner.stdin.end();
+        runner.kill();
         app.quit();
       }
     });
   } else {
     process.on("SIGTERM", () => {
+      runner.stdout.end();
+      runner.stdin.end();
+      runner.kill();
       app.quit();
     });
   }
+}
+
+function initBackend() {
+  sendProcMessage("frate", FRAME_RATE.toString());
+  sendProcMessage("uadd", "4");
+  sendProcMessage("uedit", "0|a");
+}
+
+function sendProcMessage(command, data) {
+  const format = "@p!" + command + "~" + data + "\n";
+  runner.stdin.write(format);
 }

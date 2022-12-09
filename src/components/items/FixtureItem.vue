@@ -1,11 +1,12 @@
 <template>
   <div
-    class="fix"
-    :style="`top: ${posY}%; 
-            left: ${posX}%;
+    :class="'fix'"
+    :style="`top: ${data.posY}vh; 
+            left: ${data.posX}vh;
             height: ${3 * scale}vh;
             width: ${3 * scale}vh;
             `"
+    @drag="captureDrag"
   >
     <div class="head" :style="`background-color: ${data.color}`" />
   </div>
@@ -14,13 +15,6 @@
 <script>
 export default {
   name: "FixtureItem",
-  data() {
-    return {
-      posX: 2,
-      posY: 0,
-    };
-  },
-  methods: {},
   props: {
     scale: {
       type: Number,
@@ -31,21 +25,27 @@ export default {
       required: true,
     },
   },
+  methods: {
+    captureDrag(event) {
+      console.log(event);
+    },
+  },
 };
 </script>
 
 <style>
-.fixture {
+.fix {
   height: 100%;
   width: 100%;
   border-style: solid;
   border-width: 0.5vh;
   border-color: #47474e;
   background-color: rgb(108, 108, 108);
-  position: relative;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 1vh;
 }
 
 .head {

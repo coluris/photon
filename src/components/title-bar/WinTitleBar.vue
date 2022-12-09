@@ -8,15 +8,17 @@
         class="menu-item"
         @mouseover="show(option.toLowerCase())"
         @click="showMenu = !showMenu"
-        @focusout="showMenu = false"
+        @focusout="handleFocusOut"
       >
         {{ option }}
       </button>
+      <div class="menu-items-rest" />
     </div>
     <div class="drag-title-area">
       <p>Photon — SHOW NAME</p>
     </div>
     <div class="menu-buttons">
+      <div class="menu-buttons-rest" />
       <button class="menu-button" @click="minimize()">
         <svg width="12" height="12" xmlns="http://www.w3.org/2000/svg">
           <line
@@ -91,12 +93,13 @@
       v-show="showMenu"
       class="dropdown-menu"
       :options="options"
+      @closemenu="showMenu = false"
     />
   </div>
 </template>
 
 <script>
-import DropdownMenu from "@/components/dropdown/DropdownMenu";
+import DropdownMenu from "../../components/dropdown/DropdownMenu";
 export default {
   name: "WinTitleBar",
   components: {
@@ -106,6 +109,11 @@ export default {
     closeApp() {
       if (window.ipc) window.ipc.send("menu", "close");
     },
+    handleFocusOut() {
+      setTimeout(() => {
+        this.showMenu = false;
+      }, 135);
+    },
     show(menuOption) {
       const dropdown = this.$refs["dropdown"].$el;
       const element = this.$refs[menuOption][0];
@@ -114,12 +122,31 @@ export default {
       switch (menuOption) {
         case "file":
           this.options = [
-            ["New Show", "Save Show", "Close Show"],
-            ["Open Show"],
+            [
+              ["New Show", () => window.ipc.send("menu", "nextCue")],
+              ["Save Show", () => console.log("Save Show")],
+              ["Close Show", () => console.log("Close Show")],
+            ],
+            [["Open Show", () => window.ipc.send("menu", "fileOpen")]],
           ];
           break;
         case "edit":
-          this.options = [["Edit Option 1", "Edit Option 2"]];
+          this.options = [
+            [
+              ["Undo", () => console.log("Undo")],
+              ["Redo", () => console.log("Redo")],
+            ],
+          ];
+          break;
+        case "view":
+          this.options = [
+            [
+              ["Color Picker", () => console.log("Color Picker")],
+              ["Intensity", () => console.log("Intensity")],
+              ["Effects", () => console.log("Effects")],
+            ],
+            [["Edit Layout", () => console.log("Edit Layout")]],
+          ];
           break;
         default:
           break;
@@ -157,6 +184,11 @@ export default {
   position: absolute;
   z-index: 10;
 }
+.menu-items-rest {
+  height: 30px;
+  width: 100%;
+  -webkit-app-region: drag;
+}
 .menu-items {
   display: flex;
   margin-left: 25px;
@@ -164,6 +196,7 @@ export default {
   align-items: center;
   justify-content: left;
   width: 33%;
+  flex-shrink: 0;
 }
 .top-bar {
   height: 30px;
@@ -196,6 +229,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 .close-button:hover {
   background-color: red;
@@ -203,8 +237,13 @@ export default {
 .close-button:active {
   background-color: rgb(161, 0, 0);
 }
+.menu-buttons-rest {
+  -webkit-app-region: drag;
+  height: 30px;
+  width: 100%;
+}
 .menu-buttons {
-  width: 33%;
+  width: 32.5%;
   display: flex;
   justify-content: right;
   align-items: center;
@@ -218,6 +257,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 .menu-button:hover {
   background-color: #bebebe;
@@ -227,7 +267,7 @@ export default {
 }
 
 .menu-item {
-  height: 80%;
+  height: 70%;
   width: auto;
   border: none;
   background-color: inherit;
