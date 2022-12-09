@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "artnet_manager.h"
 #include "internal_manager.h"
+#include "serial_manager.h"
+#include "output_manager.h"
 #include "show.h"
 #include "util.h"
 std::vector<OutputManager *> outputs;
@@ -33,10 +35,16 @@ void executeMessage(std::string command, std::string data)
             UniverseManager::addUniverse(uni);
         }
         break;
+    case "serial"_:
+    {
+        SerialManager *serial = new SerialManager(data, UniverseManager::getRefreshRate());
+        UniverseManager::attachOutput(serial, generateUUID());
+        break;
+    }
     case "artnet"_:
     {
-        ArtNetManager *artnet = new ArtNetManager(data, UniverseManager::getRefreshRate());
-        UniverseManager::attachOutput(artnet, artnet->getIP());
+        ArtNetManager *artnet = new ArtNetManager(artnet->getIP(), UniverseManager::getRefreshRate());
+        UniverseManager::attachOutput(artnet, generateUUID());
         break;
     }
     case "uedit"_:

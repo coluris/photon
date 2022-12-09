@@ -9,22 +9,21 @@
 #include <thread>
 #include <cmath>
 
-SerialManager::SerialManager(std::string port, int refresh_rate) : io(), ser_port(io, port)
+SerialManager::SerialManager(std::string port, int refresh_rate)
 {
-    Logger::log("Initializing serial output on " + port, Logger::INFO);
+    this->ser_serv = new SerialService(port);
     this->port_name = port;
     this->refresh_rate = refresh_rate;
     this->alive = false;
-    // TODO SERIAL OUTPUT MANAGEMENT, take a page from Art-Net Manager, logic is decently airtight
 }
 
 void SerialManager::begin()
 {
     Logger::log("Starting serial output on " + this->port_name, Logger::INFO);
-    ser_port.set_option(boost::asio::serial_port_base::baud_rate(3000000));
-    ser_port.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-    ser_port.set_option(boost::asio::serial_port_base::character_size(8));
-    ser_port.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+    this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::baud_rate(3000000));
+    this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
+    this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::character_size(8));
+    this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
 
     int counter = 0;
     for (Universe *u : UniverseManager::getUniverses())
@@ -56,7 +55,7 @@ void SerialManager::close()
 {
     this->refresh_thread = std::thread([] {});
     refresh_thread.join();
-    this->ser_port.close();
+    this->ser_serv->getSerialService()->close();
     Logger::log("Stopping serial output port on " + this->port_name, Logger::INFO);
 }
 
@@ -80,11 +79,25 @@ void SerialManager::pushData()
         {
             packet[5 + i] = data[i];
         }
-        boost::asio::write(this->ser_port, boost::asio::buffer(packet, size_t(518)));
+        boost::asio::write(*this->ser_serv->getSerialService(), boost::asio::buffer(packet, size_t(518)));
     }
 }
 
 bool SerialManager::hasBegun()
 {
     return this->alive;
+}
+
+SerialService::SerialService(std::string port) : io(), ser_port(io, port)
+{
+    Logger::log("Initializing serial output on " + port, Logger::INFO);
+}
+
+SerialService::~SerialService()
+{
+}
+
+boost::asio::serial_port *SerialService::getSerialService()
+{
+    return &this->ser_port;
 }

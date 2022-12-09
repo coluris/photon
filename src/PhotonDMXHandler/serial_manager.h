@@ -2,16 +2,27 @@
 #include <string>
 #include <map>
 #include <thread>
+#include <vector>
 #include <boost/asio.hpp>
 #include "output_manager.h"
+
+class SerialService
+{
+    boost::asio::io_service io;
+    boost::asio::serial_port ser_port;
+
+public:
+    SerialService(std::string port);
+    ~SerialService();
+    boost::asio::serial_port *getSerialService();
+};
 
 class SerialManager : public OutputManager
 {
     int refresh_rate;
     std::thread refresh_thread;
     std::string port_name;
-    boost::asio::io_service io;
-    boost::asio::serial_port ser_port;
+    SerialService *ser_serv;
     bool alive;
 
 public:

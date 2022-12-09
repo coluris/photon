@@ -13,7 +13,8 @@ const midi = require("midi");
 const midiListener = new midi.Input();
 const backend = require("child_process");
 const FRAME_RATE = 40;
-const backend_file = process == "win32" ? "PhotonDMXHandler" : "./PhotonDMXHandler";
+const backend_file =
+  process == "win32" ? "PhotonDMXHandler" : "./PhotonDMXHandler";
 const runner = backend.spawn(backend_file, {
   stdio: ["pipe", "pipe", "pipe"],
 });
@@ -80,7 +81,8 @@ async function createWindow() {
         showData = JSON.parse(fs.readFileSync(showFile, "utf8"));
         win.webContents.send("show", showData);
         sendProcMessage("ldshow", showFile);
-        sendProcMessage("artnet", "169.254.158.174");
+        //sendProcMessage("artnet", "169.254.158.174");
+        sendProcMessage("serial", "COM5");
         break;
       }
       case "nextCue":
@@ -220,7 +222,7 @@ if (isDevelopment) {
 function initBackend() {
   sendProcMessage("frate", FRAME_RATE.toString());
   sendProcMessage("uadd", "4");
-  sendProcMessage("uedit", "0|a");
+  sendProcMessage("uedit", "0|s");
 }
 
 function sendProcMessage(command, data) {
