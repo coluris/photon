@@ -30,9 +30,8 @@ build:
 .PHONY: build-c
 build-c:
 	@-echo $(MESSAGE)
-	gcc -c ./src/PhotonDMXHandler/artnet/*.c $(CC_ARGS)
-	mv *.o ./src/PhotonDMXHandler/artnet/
-	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./src/PhotonDMXHandler/artnet/*.o -I ./include -I ./src/PhotonDMXHandler/artnet $(CPP_ARGS)
+	gcc -c ./include/artnet/*.c $(CC_ARGS)
+	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./include/artnet/*.o -I ./include -I ./src/PhotonDMXHandler/artnet $(CPP_ARGS)
 .PHONY: cleaninstall
 cleaninstall:
 	npm ci
