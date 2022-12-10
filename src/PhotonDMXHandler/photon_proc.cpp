@@ -43,7 +43,7 @@ void executeMessage(std::string command, std::string data)
     }
     case "artnet"_:
     {
-        ArtNetManager *artnet = new ArtNetManager(artnet->getIP(), UniverseManager::getRefreshRate());
+        ArtNetManager *artnet = new ArtNetManager(data, UniverseManager::getRefreshRate());
         UniverseManager::attachOutput(artnet, artnet->getIP());
         break;
     }
