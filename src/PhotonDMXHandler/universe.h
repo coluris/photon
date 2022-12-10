@@ -10,26 +10,17 @@ class Universe
 {
 
 public:
-    enum OUTPUT_TYPE
-    {
-        SERIAL,
-        ARTNET,
-        NONE
-    };
-    Universe(OUTPUT_TYPE type = NONE);
+    Universe();
     ~Universe();
     uint8_t *getData();
     std::string getDataAsString();
     uint8_t getChannelValue(short channel);
     bool setChannelValue(short channel, uint8_t value);
     bool setUniverse(uint8_t *values);
-    bool setOutputType(OUTPUT_TYPE type);
     std::string getUUID();
-    OUTPUT_TYPE getOutputType();
 
 private:
     uint8_t *data;
-    OUTPUT_TYPE outputType;
     std::string UUID;
 };
 
@@ -55,7 +46,6 @@ public:
     static int getRefreshRate();
     static void processEffects();
     static void processTransitions();
-    static void processCues();
     static void attachOutput(OutputManager *out, std::string id);
     static OutputManager *getOutputManager(std::string id);
 };

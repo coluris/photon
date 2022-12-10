@@ -18,16 +18,7 @@ void ArtNetManager::begin()
 {
     artnet_set_node_type(this->node, ARTNET_RAW);
     artnet_set_port_type(this->node, 0, ARTNET_ENABLE_INPUT, ARTNET_PORT_DMX);
-    int counter = 0;
-    for (Universe *u : UniverseManager::getUniverses())
-    {
-        if (u->getOutputType() == Universe::OUTPUT_TYPE::ARTNET)
-        {
-            this->routing.insert(std::pair(UniverseManager::getUniverseNum(u), counter));
-            counter++;
-            Logger::log("Initializing universe " + ip + ":" + std::to_string(UniverseManager::getUniverseNum(u)), Logger::INFO);
-        }
-    }
+
     artnet_start(this->node);
     Logger::log("Starting Art-Net server on " + ip, Logger::INFO);
     this->alive = true;

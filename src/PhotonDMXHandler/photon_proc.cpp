@@ -38,13 +38,13 @@ void executeMessage(std::string command, std::string data)
     case "serial"_:
     {
         SerialManager *serial = new SerialManager(data, UniverseManager::getRefreshRate());
-        UniverseManager::attachOutput(serial, generateUUID());
+        UniverseManager::attachOutput(serial, data);
         break;
     }
     case "artnet"_:
     {
         ArtNetManager *artnet = new ArtNetManager(artnet->getIP(), UniverseManager::getRefreshRate());
-        UniverseManager::attachOutput(artnet, generateUUID());
+        UniverseManager::attachOutput(artnet, artnet->getIP());
         break;
     }
     case "uedit"_:
@@ -52,13 +52,6 @@ void executeMessage(std::string command, std::string data)
         std::vector<std::string> tokens = split(data, '|');
         int univ_num = std::stoi(tokens.at(0));
         std::string out_type = tokens.at(1);
-        Universe::OUTPUT_TYPE out = Universe::NONE;
-        if (out_type == "a")
-            out = Universe::ARTNET;
-        if (out_type == "s")
-            out = Universe::SERIAL;
-
-        UniverseManager::getUniverses()[univ_num]->setOutputType(out);
         break;
     }
     case "fedit"_:
@@ -73,6 +66,15 @@ void executeMessage(std::string command, std::string data)
             fix_list.push_back(Show::getFixtureById(fix));
         }
         Show::getCuelists()[0]->getActiveCue()->setValue(fix_list, attr, val);
+        break;
+    }
+    case "route"_:
+    {
+        std::vector<std::string> tokens = split(data, '|');
+        std::string output_id = tokens.at(0);
+        int extern_univ = std::stoi(tokens.at(1));
+        int intern_univ = std::stoi(tokens.at(2));
+        UniverseManager::getOutputManager(output_id)->setRouting(extern_univ, intern_univ);
         break;
     }
     case "ldshow"_:

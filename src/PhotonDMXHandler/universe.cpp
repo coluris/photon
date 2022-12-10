@@ -21,10 +21,9 @@
 #include "cuelist.h"
 #undef ERROR
 
-Universe::Universe(OUTPUT_TYPE type /**= OUTPUT_TYPE::NONE **/)
+Universe::Universe()
 {
     this->data = new uint8_t[512];
-    this->outputType = type;
     this->UUID = generateUUID();
     memset(this->data, 0, 512);
 }
@@ -61,19 +60,6 @@ bool Universe::setUniverse(uint8_t *values)
 {
     this->data = values;
     return this->data == values;
-}
-bool Universe::setOutputType(OUTPUT_TYPE type)
-{
-    this->outputType = type;
-    return this->outputType == type;
-}
-std::string Universe::getUUID()
-{
-    return this->UUID;
-}
-Universe::OUTPUT_TYPE Universe::getOutputType()
-{
-    return this->outputType;
 }
 
 std::string Universe::getDataAsString()

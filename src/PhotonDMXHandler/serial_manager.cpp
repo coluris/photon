@@ -24,14 +24,6 @@ void SerialManager::begin()
     this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::character_size(8));
     this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
 
-    int counter = 0;
-    for (Universe *u : UniverseManager::getUniverses())
-    {
-        if (u->getOutputType() == Universe::OUTPUT_TYPE::SERIAL)
-        {
-            this->routing.insert(std::pair(UniverseManager::getUniverseNum(u), counter));
-        }
-    }
     this->alive = true;
 }
 

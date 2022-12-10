@@ -115,6 +115,10 @@ void Show::loadLayouts(json layouts)
 }
 void Show::loadShowFromFile(std::string fileName)
 {
+    Show::fixMap.clear();
+    Show::fix_list.clear();
+    Show::cuelists.clear();
+    Show::layouts_map.clear();
     Logger::log("Loading show from " + fileName, Logger::INFO);
     std::fstream showFile((fileName).c_str());
     json showData = json::parse(showFile);
@@ -273,6 +277,7 @@ json Show::serializeLayouts()
 
 void Show::saveShowToFile(std::string saveFile)
 {
+    Logger::log("Saving show to " + saveFile, Logger::INFO);
     if (saveFile == "")
     {
         saveFile = Show::fileName;

@@ -81,8 +81,6 @@ async function createWindow() {
         showData = JSON.parse(fs.readFileSync(showFile, "utf8"));
         win.webContents.send("show", showData);
         sendProcMessage("ldshow", showFile);
-        // sendProcMessage("artnet", "169.254.158.174");
-        sendProcMessage("serial", "COM5");
         break;
       }
       case "nextCue":
@@ -225,7 +223,9 @@ if (isDevelopment) {
 function initBackend() {
   sendProcMessage("frate", FRAME_RATE.toString());
   sendProcMessage("uadd", "4");
-  sendProcMessage("uedit", "0|s");
+  // sendProcMessage("artnet", "169.254.158.174");
+  sendProcMessage("serial", "COM5");
+  sendProcMessage("route", "COM5|0|0");
 }
 
 function sendProcMessage(command, data) {
