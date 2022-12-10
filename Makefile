@@ -30,7 +30,9 @@ build:
 .PHONY: build-c
 build-c:
 	@-echo $(MESSAGE)
+	@-cd ./include/artnet/
 	gcc -c ./include/artnet/*.c $(CC_ARGS)
+	@-cd ../../
 	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./include/artnet/*.o -I ./include -I ./src/PhotonDMXHandler/artnet $(CPP_ARGS)
 .PHONY: cleaninstall
 cleaninstall:
