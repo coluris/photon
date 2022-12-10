@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <map>
-#include <thread>
 #include <vector>
 #include <boost/asio.hpp>
 #include "output_manager.h"
@@ -20,7 +19,6 @@ public:
 class SerialManager : public OutputManager
 {
     int refresh_rate;
-    std::thread refresh_thread;
     std::string port_name;
     SerialService *ser_serv;
     bool alive;

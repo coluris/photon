@@ -6,7 +6,6 @@
 #include <boost/asio/serial_port.hpp>
 #include "universe.h"
 #include <chrono>
-#include <thread>
 #include <cmath>
 
 SerialManager::SerialManager(std::string port, int refresh_rate)
@@ -53,8 +52,6 @@ int SerialManager::getRouting(int internalUniverse)
 
 void SerialManager::close()
 {
-    this->refresh_thread = std::thread([] {});
-    refresh_thread.join();
     this->ser_serv->getSerialService()->close();
     Logger::log("Stopping serial output port on " + this->port_name, Logger::INFO);
 }
