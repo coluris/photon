@@ -5,6 +5,7 @@ node_modules
 /Effects
 /Fixtures
 /Shows
+/include
 
 # local env files
 .env.local

@@ -277,11 +277,11 @@ json Show::serializeLayouts()
 
 void Show::saveShowToFile(std::string saveFile)
 {
-    Logger::log("Saving show to " + saveFile, Logger::INFO);
     if (saveFile == "")
     {
         saveFile = Show::fileName;
     }
+    Logger::log("Saving show to " + saveFile, Logger::INFO);
     json show;
     show["name"] = Show::showName;
     show["fixtures"] = serializeFixtures();
