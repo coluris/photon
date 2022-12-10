@@ -8,9 +8,10 @@ class Cuelist
     std::vector<Cue *> cuelist;
     Transition *currentTransition = nullptr;
     int currentCue;
+    std::string name;
 
 public:
-    Cuelist();
+    Cuelist(std::string name);
     void appendCue(Cue *cue);
     void appendCopy(Cue *cue);
     void insertCue(Cue *cue, int index);
@@ -25,4 +26,6 @@ public:
     Cue *getActiveCue();
     Transition *getActiveTransition();
     bool setActiveTransition(Transition *activeTransition);
+    std::vector<Cue *> getCuelist();
+    std::string getName();
 };

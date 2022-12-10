@@ -20,15 +20,17 @@ std::map<Fixture::ATTR_TYPES, std::string> Fixture::attr_type_names =
      {Fixture::COLOR_INDEX, "col-i"},
      {Fixture::COLOR_SPIN, "col-s"}};
 
-Fixture::Fixture(int channel, int universe)
+Fixture::Fixture(std::string id, int channel, int universe)
 {
+    this->id = id;
     this->startChannel = channel - 1;
     this->fileName = "";
     this->u = UniverseManager::getUniverses()[universe - 1];
 }
 
-Fixture::Fixture(std::string fileName, int channel, int universe)
+Fixture::Fixture(std::string fileName, std::string id, int channel, int universe)
 {
+    this->id = id;
     this->startChannel = channel - 1;
     this->fileName = fileName;
     this->u = UniverseManager::getUniverses()[universe - 1];
@@ -138,4 +140,19 @@ void Fixture::outputToUniverse()
             }
         }
     }
+}
+
+std::string Fixture::getID()
+{
+    return this->id;
+}
+
+std::string Fixture::getFileName()
+{
+    return this->fileName;
+}
+
+Universe *Fixture::getUniverse()
+{
+    return this->u;
 }

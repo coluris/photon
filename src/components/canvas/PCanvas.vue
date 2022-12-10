@@ -7,8 +7,8 @@
         :id="x"
         :data="{
           color: getFixtureColorVals(x),
-          posX: layout[x].x,
-          posY: layout[x].y,
+          posX: layout['Layout 1'][x].x,
+          posY: layout['Layout 1'][x].y,
         }"
         :class="selectedFixtures.includes(x) ? 'select' : ''"
         @click="selectedFixtures.push(x)"

@@ -81,12 +81,15 @@ async function createWindow() {
         showData = JSON.parse(fs.readFileSync(showFile, "utf8"));
         win.webContents.send("show", showData);
         sendProcMessage("ldshow", showFile);
-        //sendProcMessage("artnet", "169.254.158.174");
+        // sendProcMessage("artnet", "169.254.158.174");
         sendProcMessage("serial", "COM5");
         break;
       }
       case "nextCue":
         sendProcMessage("nextcue");
+        break;
+      case "save":
+        sendProcMessage("save");
         break;
     }
   });

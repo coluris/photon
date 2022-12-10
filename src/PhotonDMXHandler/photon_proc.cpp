@@ -81,6 +81,10 @@ void executeMessage(std::string command, std::string data)
         break;
     case "nextcue"_:
         Show::getCuelists()[0]->nextCue();
+        break;
+    case "save"_:
+        Show::saveShowToFile();
+        break;
     }
 }
 

@@ -12,9 +12,11 @@
 #include "transition.h"
 #include <functional>
 std::map<std::string, Cue::TRIGGER> Cue::triggerMap = {{"HALT", Cue::HALT}, {"FOLLOW", Cue::FOLLOW}};
+std::map<Cue::TRIGGER, std::string> Cue::triggerNameMap = {{Cue::HALT, "HALT"}, {Cue::FOLLOW, "FOLLOW"}};
 
 Cue::Cue(TRIGGER trigger, float transitionLength, float delayLength)
 {
+    this->trigger = trigger;
     this->transitionLength = transitionLength;
     this->delayLength = delayLength;
     for (Fixture *fix : Show::getFixtureList())
@@ -29,6 +31,11 @@ Cue::Cue(TRIGGER trigger, float transitionLength, float delayLength)
 void Cue::addEffect(Effect *effect)
 {
     this->effects.push_back(effect);
+}
+
+void Cue::setCueTitle(std::string title)
+{
+    this->cue_title = title;
 }
 
 void Cue::removeEffect(Effect *effect)
@@ -74,6 +81,11 @@ Cue::TRIGGER Cue::getTriggerByName(std::string name)
     return triggerMap[name];
 }
 
+std::string Cue::getNameByTrigger(Cue::TRIGGER trigger)
+{
+    return triggerNameMap[trigger];
+}
+
 bool Cue::setTransitionLength(float transitionLength)
 {
     this->transitionLength = transitionLength;
@@ -96,4 +108,14 @@ float Cue::getDelayLength()
 std::map<Fixture *, std::map<std::string, int>> Cue::getFixtureVals()
 {
     return this->fixtureVals;
+}
+
+Cue::TRIGGER Cue::getCueTrigger()
+{
+    return this->trigger;
+}
+
+std::string Cue::getCueTitle()
+{
+    return this->cue_title;
 }

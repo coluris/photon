@@ -10,7 +10,7 @@
 #include <math.h>
 
 std::map<std::string, Effect::E_SHAPE> Effect::shape_names{{"square", Effect::SQUARE}, {"sine", Effect::SINE}, {"ramp", Effect::RAMP}, {"sawtooth", Effect::SAW}, {"custom", Effect::CUSTOM}};
-
+std::map<Effect::E_SHAPE, std::string> Effect::names_of_shapes{{Effect::SQUARE, "square"}, {Effect::SINE, "sine"}, {Effect::RAMP, "ramp"}, {Effect::SAW, "sawtooth"}, {Effect::CUSTOM, "custom"}};
 Effect::Effect(std::vector<Fixture *> fixList, std::string effect_type)
 {
     this->fixList = fixList;
@@ -173,4 +173,26 @@ bool Effect::updateShape(E_SHAPE shape)
 Effect::E_SHAPE Effect::getShapeFromName(std::string name)
 {
     return Effect::shape_names[name];
+}
+
+std::string Effect::getEffectType()
+{
+    return this->effect_type;
+}
+std::vector<Fixture *> Effect::getFixtureList()
+{
+    return this->fixList;
+}
+float Effect::getParameter(std::string param)
+{
+    return this->paramList[param];
+}
+
+std::string Effect::getNameFromShape(E_SHAPE shape)
+{
+    return Effect::names_of_shapes[shape];
+}
+Effect::E_SHAPE Effect::getEffectShape()
+{
+    return this->effect_shape;
 }

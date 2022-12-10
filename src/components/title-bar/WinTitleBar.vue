@@ -124,7 +124,7 @@ export default {
           this.options = [
             [
               ["New Show", () => window.ipc.send("menu", "nextCue")],
-              ["Save Show", () => console.log("Save Show")],
+              ["Save Show", () => window.ipc.send("menu", "save")],
               ["Close Show", () => console.log("Close Show")],
             ],
             [["Open Show", () => window.ipc.send("menu", "fileOpen")]],

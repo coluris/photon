@@ -8,8 +8,8 @@ class Fixture
 {
 
 public:
-    Fixture(int channel, int universe);
-    Fixture(std::string fileName, int channel, int universe);
+    Fixture(std::string id, int channel, int universe);
+    Fixture(std::string fileName, std::string id, int channel, int universe);
     ~Fixture();
     void loadFixtureFromFile();
     bool setAttribute(std::string attr, uint16_t val);
@@ -18,8 +18,11 @@ public:
     bool setUniverse(int universe);
     bool setStartChannel(int startChannel);
     int getStartChannel();
+    Universe *getUniverse();
+    std::string getFileName();
     bool setChannelMode(int channel, std::string mode);
     std::map<std::string, uint16_t> getAttributeMap();
+    std::string getID();
     void detach();
     enum ATTR_TYPES
     {

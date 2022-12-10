@@ -3,8 +3,9 @@
 #include <vector>
 #include "logger.h"
 
-Cuelist::Cuelist()
+Cuelist::Cuelist(std::string name)
 {
+    this->name = name;
     this->currentCue = 0;
 }
 
@@ -100,4 +101,14 @@ Cue *Cuelist::getActiveCue()
 Transition *Cuelist::getActiveTransition()
 {
     return this->currentTransition;
+}
+
+std::vector<Cue *> Cuelist::getCuelist()
+{
+    return this->cuelist;
+}
+
+std::string Cuelist::getName()
+{
+    return this->name;
 }
