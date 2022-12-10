@@ -13,35 +13,12 @@ else
 		CPP_ARGS = -lc++ -std=c++17 -O2
 	endif
 endif
-.PHONY: install
-install:
-	npm install
+.PHONY: install-deps
+install-deps:
+	@-cd ./include && git clone https://github.com/coluris/photon-deps.git
 	make build-c
-.PHONY: run
-run:
-	npm run electron:serve
-.PHONY: background
-background:
-	@-make build-c
-	./PhotonDMXHandler
-.PHONY: build
-build:
-	npm run electron:build
 .PHONY: build-c
 build-c:
 	@-echo $(MESSAGE)
-	gcc -c ./include/artnet/*.c $(CC_ARGS)
-	@mv *.o ./include/artnet
-	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./include/artnet/*.o -I ./include -I ./src/PhotonDMXHandler/artnet $(CPP_ARGS)
-.PHONY: cleaninstall
-cleaninstall:
-	npm ci
-	make build-c
-.PHONY: storybook
-storybook:
-	npm run storybook
-.PHONY: update
-update:
-	git pull
-	npm ci
-	make build-c
+	cd ./include/photon-deps/artnet && gcc -c *.c $(CC_ARGS)
+	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./include/photon-deps/artnet/*.o -I ./include/photon-deps $(CPP_ARGS)

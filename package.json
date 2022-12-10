@@ -11,7 +11,9 @@
     "postuninstall": "electron-builder install-app-deps",
     "postinstall": "electron-builder install-app-deps",
     "build-storybook": "build-storybook",
-    "storybook": "start-storybook -p 6006"
+    "storybook": "start-storybook -p 6006",
+    "install-dep": "npm install && make install",
+    "ci": "npm ci"
   },
   "main": "background.js",
   "dependencies": {
