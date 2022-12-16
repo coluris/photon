@@ -77,6 +77,7 @@ async function createWindow() {
         if (showFileDialog === undefined) {
           break;
         }
+        console.log(showFileDialog);
         const showFile = showFileDialog[0];
         showData = JSON.parse(fs.readFileSync(showFile, "utf8"));
         win.webContents.send("show", showData);
@@ -223,9 +224,9 @@ if (isDevelopment) {
 function initBackend() {
   sendProcMessage("frate", FRAME_RATE.toString());
   sendProcMessage("uadd", "4");
-  sendProcMessage("serial", "COM5");
+  // sendProcMessage("serial", "COM5");
   sendProcMessage("artnet", "169.254.158.174");
-  sendProcMessage("route", "COM5|0|0");
+  // sendProcMessage("route", "COM5|0|0");
   sendProcMessage("route", "169.254.158.174|0|0");
 }
 

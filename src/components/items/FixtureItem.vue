@@ -6,7 +6,6 @@
             height: ${3 * scale}vh;
             width: ${3 * scale}vh;
             `"
-    @drag="captureDrag"
   >
     <div class="head" :style="`background-color: ${data.color}`" />
   </div>
@@ -26,9 +25,6 @@ export default {
     },
   },
   methods: {
-    captureDrag(event) {
-      console.log(event);
-    },
   },
 };
 </script>
