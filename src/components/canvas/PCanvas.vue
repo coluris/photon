@@ -74,6 +74,43 @@ export default {
     },
   },
   methods: {
+    isSelecting(fix) {
+      // LOL FIX LATER PLEASE
+      return (
+        (fix.offsetTop >= this.selectionBox.top &&
+          fix.offsetLeft >= this.selectionBox.left &&
+          fix.offsetTop <= this.selectionBox.bottom &&
+          fix.offsetLeft <= this.selectionBox.right) ||
+        (fix.offsetTop + fix.offsetHeight >= this.selectionBox.top &&
+          fix.offsetLeft >= this.selectionBox.left &&
+          fix.offsetTop + fix.offsetHeight <= this.selectionBox.bottom &&
+          fix.offsetLeft <= this.selectionBox.right) ||
+        (fix.offsetTop >= this.selectionBox.top &&
+          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.left &&
+          fix.offsetTop <= this.selectionBox.bottom &&
+          fix.offsetLeft + fix.offsetWidth <= this.selectionBox.right) ||
+        (fix.offsetTop + fix.offsetHeight >= this.selectionBox.top &&
+          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.left &&
+          fix.offsetTop + fix.offsetHeight <= this.selectionBox.bottom &&
+          fix.offsetLeft + fix.offsetWidth <= this.selectionBox.right) ||
+        (fix.offsetTop >= this.selectionBox.top &&
+          fix.offsetTop <= this.selectionBox.bottom &&
+          fix.offsetLeft <= this.selectionBox.left &&
+          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.right) ||
+        (fix.offsetTop + fix.offsetHeight >= this.selectionBox.top &&
+          fix.offsetTop + fix.offsetHeight <= this.selectionBox.bottom &&
+          fix.offsetLeft <= this.selectionBox.left &&
+          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.right) ||
+        (fix.offsetTop <= this.selectionBox.top &&
+          fix.offsetTop + fix.offsetHeight >= this.selectionBox.bottom &&
+          fix.offsetLeft >= this.selectionBox.left &&
+          fix.offsetLeft <= this.selectionBox.right) ||
+        (fix.offsetTop <= this.selectionBox.top &&
+          fix.offsetTop + fix.offsetHeight >= this.selectionBox.bottom &&
+          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.left &&
+          fix.offsetLeft + fix.offsetWidth <= this.selectionBox.right)
+      );
+    },
     getClassname(fixtureID) {
       if (this.selectedFixtures.includes(fixtureID)) {
         return "select";
@@ -99,23 +136,23 @@ export default {
         const x = event.clientX - canvas.offsetLeft;
         const y = event.clientY - canvas.offsetTop;
         this.selectEnd = { x, y };
-        this.computeMultiSelectFixtures();
+        this.computeMultiSelectFixtures(event);
       }
     },
-    computeMultiSelectFixtures() {
+    computeMultiSelectFixtures(event) {
       const fixtures = document.getElementsByClassName("fix");
       const selected = [];
       for (const fix of fixtures) {
-        if (
-          fix.offsetTop >= this.selectionBox.top &&
-          fix.offsetLeft >= this.selectionBox.left &&
-          fix.offsetTop <= this.selectionBox.bottom &&
-          fix.offsetLeft <= this.selectionBox.right
-        ) {
+        if (this.isSelecting(fix)) {
           selected.push(fix.id);
         }
       }
-      this.selectedFixtures = selected;
+      if (event.ctrlKey) {
+        const mergedSet = new Set(selected.concat(this.selectedFixtures));
+        this.selectedFixtures = Array.from(mergedSet);
+      } else {
+        this.selectedFixtures = selected;
+      }
     },
     handleColorChange(event) {
       const red = parseInt(event.srcElement.value.substring(1, 3), 16);
