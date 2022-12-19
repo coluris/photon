@@ -75,42 +75,47 @@ export default {
   },
   methods: {
     isSelecting(fix) {
-      // LOL FIX LATER PLEASE
+      const fixTop = fix.offsetTop;
+      const fixLeft = fix.offsetLeft;
+      const fixBottom = fixTop + fix.offsetHeight;
+      const fixRight = fixLeft + fix.offsetWidth;
+      const selTop = this.selectionBox.top;
+      const selLeft = this.selectionBox.left;
+      const selBottom = this.selectionBox.bottom;
+      const selRight = this.selectionBox.right;
+
       return (
-        (fix.offsetTop >= this.selectionBox.top &&
-          fix.offsetLeft >= this.selectionBox.left &&
-          fix.offsetTop <= this.selectionBox.bottom &&
-          fix.offsetLeft <= this.selectionBox.right) ||
-        (fix.offsetTop + fix.offsetHeight >= this.selectionBox.top &&
-          fix.offsetLeft >= this.selectionBox.left &&
-          fix.offsetTop + fix.offsetHeight <= this.selectionBox.bottom &&
-          fix.offsetLeft <= this.selectionBox.right) ||
-        (fix.offsetTop >= this.selectionBox.top &&
-          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.left &&
-          fix.offsetTop <= this.selectionBox.bottom &&
-          fix.offsetLeft + fix.offsetWidth <= this.selectionBox.right) ||
-        (fix.offsetTop + fix.offsetHeight >= this.selectionBox.top &&
-          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.left &&
-          fix.offsetTop + fix.offsetHeight <= this.selectionBox.bottom &&
-          fix.offsetLeft + fix.offsetWidth <= this.selectionBox.right) ||
-        (fix.offsetTop >= this.selectionBox.top &&
-          fix.offsetTop <= this.selectionBox.bottom &&
-          fix.offsetLeft <= this.selectionBox.left &&
-          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.right) ||
-        (fix.offsetTop + fix.offsetHeight >= this.selectionBox.top &&
-          fix.offsetTop + fix.offsetHeight <= this.selectionBox.bottom &&
-          fix.offsetLeft <= this.selectionBox.left &&
-          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.right) ||
-        (fix.offsetTop <= this.selectionBox.top &&
-          fix.offsetTop + fix.offsetHeight >= this.selectionBox.bottom &&
-          fix.offsetLeft >= this.selectionBox.left &&
-          fix.offsetLeft <= this.selectionBox.right) ||
-        (fix.offsetTop <= this.selectionBox.top &&
-          fix.offsetTop + fix.offsetHeight >= this.selectionBox.bottom &&
-          fix.offsetLeft + fix.offsetWidth >= this.selectionBox.left &&
-          fix.offsetLeft + fix.offsetWidth <= this.selectionBox.right)
+        (fixTop >= selTop &&
+          fixLeft >= selLeft &&
+          fixBottom <= selBottom &&
+          fixRight <= selRight) || // completely inside
+        (fixBottom >= selTop &&
+          fixTop < selTop &&
+          fixRight > selLeft &&
+          fixLeft < selRight) || // partially above
+        (fixTop <= selBottom &&
+          fixBottom > selBottom &&
+          fixRight > selLeft &&
+          fixLeft < selRight) || // partially below
+        (fixRight >= selLeft &&
+          fixLeft < selLeft &&
+          fixBottom > selTop &&
+          fixTop < selBottom) || // partially to the left
+        (fixLeft <= selRight &&
+          fixRight > selRight &&
+          fixBottom > selTop &&
+          fixTop < selBottom) || // partially to the right
+        (fixTop < selTop &&
+          fixBottom > selBottom &&
+          fixLeft < selLeft &&
+          fixRight > selRight) || // spans entire width, but top and bottom are above and below
+        (fixLeft < selLeft &&
+          fixRight > selRight &&
+          fixTop < selTop &&
+          fixBottom > selBottom) // spans entire height, but left and right are left and right of selection box
       );
     },
+
     getClassname(fixtureID) {
       if (this.selectedFixtures.includes(fixtureID)) {
         return "select";
