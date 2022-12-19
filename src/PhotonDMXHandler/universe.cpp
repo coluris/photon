@@ -184,8 +184,8 @@ void UniverseManager::processNextFrame()
 {
     tick++;
     std::thread proc_effect(&UniverseManager::processEffects);
-    std::thread proc_transitions(&UniverseManager::processTransitions);
     proc_effect.detach();
+    std::thread proc_transitions(&UniverseManager::processTransitions);
     proc_transitions.detach();
 };
 

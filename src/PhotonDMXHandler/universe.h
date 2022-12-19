@@ -46,6 +46,7 @@ public:
     static int getRefreshRate();
     static void processEffects();
     static void processTransitions();
+    static void processCues();
     static void attachOutput(OutputManager *out, std::string id);
     static OutputManager *getOutputManager(std::string id);
 };

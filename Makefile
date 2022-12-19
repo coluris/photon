@@ -15,6 +15,7 @@ else
 endif
 .PHONY: install-deps
 install-deps:
+	mkdir include
 	@-cd ./include && git clone https://github.com/coluris/photon-deps.git
 	make build-c
 .PHONY: build-c

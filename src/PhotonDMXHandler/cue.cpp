@@ -66,7 +66,32 @@ void Cue::activate()
         std::map<std::string, int> attrs = val.second;
         for (auto a : attrs)
         {
-            f->setAttribute(a.first, a.second);
+            if (this->effects.size() == 0)
+            {
+                f->setAttribute(a.first, a.second);
+            }
+            else
+            {
+                bool shouldDefaultValueRun = true;
+                std::vector<Effect *> matchAttribute;
+                std::copy_if(this->effects.begin(), this->effects.end(), std::back_inserter(matchAttribute), [a](Effect *effect)
+                             { return effect->getEffectType() == a.first; });
+                for (Effect *e : matchAttribute)
+                {
+                    for (Fixture *fix : e->getFixtureList())
+                    {
+                        if (f->getID() == fix->getID())
+                        {
+                            shouldDefaultValueRun = false;
+                        }
+                    }
+                }
+
+                if (shouldDefaultValueRun)
+                {
+                    f->setAttribute(a.first, a.second);
+                }
+            }
         }
     }
 }

@@ -1,11 +1,11 @@
 <template>
-  <div 
-  class="canvas"
-  id="canvas"
-  @mousedown.self="handleMouseDown"
-  @mouseup="handleMouseUp"
-  @mousemove="handleMouseMove"
-  @mouseleave.self="handleMouseUp"
+  <div
+    class="canvas"
+    id="canvas"
+    @mousedown.self="handleMouseDown"
+    @mouseup="handleMouseUp"
+    @mousemove="handleMouseMove"
+    @mouseleave.self="handleMouseUp"
   >
     <div class="fixtures" v-if="fixtures">
       <fixture-item
@@ -17,10 +17,16 @@
           posX: layout['Layout 1'][x].x,
           posY: layout['Layout 1'][x].y,
         }"
-        :class="selectedFixtures.includes(x) ? 'select' : ''"
+        :class="getClassname(x)"
         @click="selectedFixtures.push(x)"
       />
-      <selection-box v-if="isMultiSelectEnabled" :start-x="selectStart.x" :start-y="selectStart.y" :end-x="selectEnd.x" :end-y="selectEnd.y"/>
+      <selection-box
+        v-if="isMultiSelectEnabled"
+        :start-x="selectStart.x"
+        :start-y="selectStart.y"
+        :end-x="selectEnd.x"
+        :end-y="selectEnd.y"
+      />
     </div>
     <input type="color" @input="handleColorChange" />
   </div>
@@ -28,7 +34,7 @@
 
 <script>
 import FixtureItem from "../items/FixtureItem";
-import SelectionBox from '../tools/SelectionBox';
+import SelectionBox from "../tools/SelectionBox";
 
 export default {
   name: "PCanvas",
@@ -58,40 +64,58 @@ export default {
       }
       return output;
     },
+    selectionBox() {
+      return {
+        top: Math.min(this.selectStart.y, this.selectEnd.y),
+        bottom: Math.max(this.selectStart.y, this.selectEnd.y),
+        left: Math.min(this.selectStart.x, this.selectEnd.x),
+        right: Math.max(this.selectStart.x, this.selectEnd.x),
+      };
+    },
   },
   methods: {
+    getClassname(fixtureID) {
+      if (this.selectedFixtures.includes(fixtureID)) {
+        return "select";
+      }
+      return "";
+    },
     handleMouseUp() {
       this.isMultiSelectEnabled = false;
-      this.selectStart = {x: 0, y: 0};
-      this.selectEnd = {x: 0, y: 0};
+      this.selectStart = { x: 0, y: 0 };
+      this.selectEnd = { x: 0, y: 0 };
     },
     handleMouseDown(event) {
       this.isMultiSelectEnabled = true;
-      const canvas = document.getElementById('canvas');
+      const canvas = document.getElementById("canvas");
       const x = event.clientX - canvas.offsetLeft;
       const y = event.clientY - canvas.offsetTop;
-      this.selectStart = {x, y};
-      this.selectEnd = {x, y};
+      this.selectStart = { x, y };
+      this.selectEnd = { x, y };
     },
-    handleMouseMove(event){
-      if(this.isMultiSelectEnabled){
-      const canvas = document.getElementById('canvas');
-      const x = event.clientX - canvas.offsetLeft;
-      const y = event.clientY - canvas.offsetTop;
-      this.selectEnd = {x, y};
-      this.computeMultiSelectFixtures();
-    }
+    handleMouseMove(event) {
+      if (this.isMultiSelectEnabled) {
+        const canvas = document.getElementById("canvas");
+        const x = event.clientX - canvas.offsetLeft;
+        const y = event.clientY - canvas.offsetTop;
+        this.selectEnd = { x, y };
+        this.computeMultiSelectFixtures();
+      }
     },
-    computeMultiSelectFixtures(){
-      const fixtures = document.getElementsByClassName('fix');
-      Array.from(fixtures).forEach((fix) => {
-        if(fix.offsetTop > this.selectEnd.y && fix.offsetLeft > this.selectEnd.x && (fix.offsetTop + fix.offsetHeight) < this.selectStart.y && (fix.offsetLeft + fix.offsetWidth) < this.selectStart.x){
-          this.selectedFixtures.push(fix.id);
+    computeMultiSelectFixtures() {
+      const fixtures = document.getElementsByClassName("fix");
+      const selected = [];
+      for (const fix of fixtures) {
+        if (
+          fix.offsetTop >= this.selectionBox.top &&
+          fix.offsetLeft >= this.selectionBox.left &&
+          fix.offsetTop <= this.selectionBox.bottom &&
+          fix.offsetLeft <= this.selectionBox.right
+        ) {
+          selected.push(fix.id);
         }
-        else{
-          this.selectedFixtures.splice(this.selectedFixtures.indexOf(fix.id));
-        }
-      });
+      }
+      this.selectedFixtures = selected;
     },
     handleColorChange(event) {
       const red = parseInt(event.srcElement.value.substring(1, 3), 16);
