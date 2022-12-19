@@ -15,7 +15,7 @@
       <div class="menu-items-rest" />
     </div>
     <div class="drag-title-area">
-      <p>Photon — SHOW NAME</p>
+      <p>Photon — {{ name }}</p>
     </div>
     <div class="menu-buttons">
       <div class="menu-buttons-rest" />
@@ -104,6 +104,12 @@ export default {
   name: "WinTitleBar",
   components: {
     DropdownMenu,
+  },
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
   },
   methods: {
     closeApp() {

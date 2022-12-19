@@ -43,4 +43,6 @@ private:
     static std::map<std::string, E_SHAPE> shape_names;
     static std::map<E_SHAPE, std::string> names_of_shapes;
     E_SHAPE effect_shape;
+    int currentExtension;
+    int getNumExtensions();
 };

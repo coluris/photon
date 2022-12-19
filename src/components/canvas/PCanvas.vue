@@ -28,7 +28,6 @@
         :end-y="selectEnd.y"
       />
     </div>
-    <input type="color" @input="handleColorChange" />
   </div>
 </template>
 
@@ -159,10 +158,10 @@ export default {
         this.selectedFixtures = selected;
       }
     },
-    handleColorChange(event) {
-      const red = parseInt(event.srcElement.value.substring(1, 3), 16);
-      const green = parseInt(event.srcElement.value.substring(3, 5), 16);
-      const blue = parseInt(event.srcElement.value.substring(5, 7), 16);
+    handleColorChange() {
+      const red = parseInt(this.selectedColor.substring(1, 3), 16);
+      const green = parseInt(this.selectedColor.substring(3, 5), 16);
+      const blue = parseInt(this.selectedColor.substring(5, 7), 16);
 
       if (this.selectedFixtures.length !== 0) {
         window.ipc.send("fixture", {
@@ -222,6 +221,15 @@ export default {
       type: Object,
       required: true,
     },
+    selectedColor: {
+      type: String,
+      default: "#FFFFFF",
+    },
+  },
+  watch: {
+    selectedColor() {
+      this.handleColorChange();
+    },
   },
 };
 </script>
@@ -232,6 +240,10 @@ export default {
   width: 100%;
   font-family: Inter;
   position: relative;
+  background-color: #2f3241;
+  border-radius: 10px;
+  height: 100%;
+  width: 75%;
 }
 
 .display {
