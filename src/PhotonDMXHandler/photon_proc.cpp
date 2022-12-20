@@ -77,6 +77,16 @@ void executeMessage(std::string command, std::string data)
         UniverseManager::getOutputManager(output_id)->setRouting(extern_univ, intern_univ);
         break;
     }
+    case "layedit"_:
+    {
+        std::vector<std::string> tokens = split(data, '|');
+        std::string layout_name = tokens.at(0);
+        std::string fix_id = tokens.at(1);
+        float x = std::stof(tokens.at(2));
+        float y = std::stof(tokens.at(3));
+        Show::setFixturePosition(layout_name, fix_id, x, y);
+        break;
+    }
     case "ldshow"_:
         Show::loadShowFromFile(data);
         Show::getCuelists()[0]->goToFirst();

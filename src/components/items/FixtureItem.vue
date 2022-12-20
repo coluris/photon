@@ -25,6 +25,9 @@ export default {
     },
   },
   methods: {
+    handleDrag(event) {
+      console.log(event);
+    },
   },
 };
 </script>

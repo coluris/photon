@@ -98,6 +98,12 @@ async function createWindow() {
       `${payload.fixtures}|${payload.attr}|${payload.value}`
     );
   });
+  ipcMain.on("layout", (event, payload) => {
+    sendProcMessage(
+      "layedit",
+      `${payload.layoutName}|${payload.fixID}|${payload.x}|${payload.y}`
+    );
+  });
   win.on("enter-full-screen", () => {
     win.webContents.send("size", win.isFullScreen());
   });

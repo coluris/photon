@@ -19,6 +19,7 @@ class Show
     static json serializeCuelists();
     static json serializeLayouts();
     static std::map<std::string, std::vector<std::map<std::string, std::pair<float, float>>>> layouts_map;
+    static std::map<std::string, std::map<std::string, int>> layoutIndicies;
     static std::string showName;
     static float liveTime;
 
@@ -30,4 +31,5 @@ public:
     static void addCuelist(Cuelist *cuelist, std::string id);
     static Fixture *getFixtureById(std::string id);
     static std::vector<Fixture *> getFixtureList();
+    static void setFixturePosition(std::string layout_name, std::string fix_id, float x, float y);
 };

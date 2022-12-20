@@ -14,7 +14,7 @@ export default {
   emits: ["color"],
   data() {
     return {
-      bgColor: "#cccccc",
+      bgColor: "#5D6381",
     };
   },
   methods: {

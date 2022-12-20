@@ -11,6 +11,7 @@ const validChannels = [
   "show",
   "universe",
   "fixture",
+  "layout",
 ];
 contextBridge.exposeInMainWorld("ipc", {
   send: (channel, data) => {

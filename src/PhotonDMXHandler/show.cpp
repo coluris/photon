@@ -16,6 +16,7 @@ std::map<std::string, Cuelist *> Show::cuelists;
 std::vector<Fixture *> Show::fix_list;
 std::map<std::string, std::vector<std::map<std::string, std::pair<float, float>>>> Show::layouts_map;
 std::string Show::showName;
+std::map<std::string, std::map<std::string, int>> Show::layoutIndicies;
 float Show::liveTime = 2.0;
 
 void Show::loadCuelists(json cuelists)
@@ -100,6 +101,7 @@ void Show::loadLayouts(json layouts)
     {
         std::string layout_name = entry.key();
         std::vector<std::map<std::string, std::pair<float, float>>> layout;
+        int index = 0;
         for (auto fix : entry.value().items())
         {
             std::string fix_name = fix.key();
@@ -109,17 +111,19 @@ void Show::loadLayouts(json layouts)
             std::map<std::string, std::pair<float, float>> fix_pos;
             fix_pos.insert(std::pair(fix_name, position));
             layout.push_back(fix_pos);
+            layoutIndicies[layout_name][fix_name] = index;
+            index++;
         }
         Show::layouts_map.insert(std::pair(layout_name, layout));
     }
 }
 void Show::loadShowFromFile(std::string fileName)
 {
+    Logger::log("Loading show from " + fileName, Logger::INFO);
     Show::fixMap.clear();
     Show::fix_list.clear();
     Show::cuelists.clear();
     Show::layouts_map.clear();
-    Logger::log("Loading show from " + fileName, Logger::INFO);
     std::fstream showFile((fileName).c_str());
     json showData = json::parse(showFile);
     loadFixtures(showData["fixtures"]);
@@ -128,6 +132,7 @@ void Show::loadShowFromFile(std::string fileName)
     Show::showName = showData["name"].get<std::string>();
     Show::fileName = fileName;
     showFile.close();
+    Logger::log("Show loaded from " + fileName, Logger::INFO);
 }
 
 std::vector<Fixture *> Show::getFixtureList()
@@ -158,6 +163,13 @@ void Show::addCuelist(Cuelist *cuelist, std::string id)
 Fixture *Show::getFixtureById(std::string id)
 {
     return fixMap[id];
+}
+
+void Show::setFixturePosition(std::string layout_name, std::string fix_id, float x, float y)
+{
+    int index = layoutIndicies[layout_name][fix_id];
+    std::pair positionPair{x, y};
+    Show::layouts_map[layout_name][index][fix_id] = positionPair;
 }
 
 json Show::serializeCuelists()
@@ -290,4 +302,5 @@ void Show::saveShowToFile(std::string saveFile)
     std::ofstream showFile((saveFile).c_str(), std::ios::trunc);
     showFile << show;
     showFile.close();
+    Logger::log("Saved show to " + saveFile, Logger::INFO);
 }

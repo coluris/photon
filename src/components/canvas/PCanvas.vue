@@ -14,11 +14,18 @@
         :id="x"
         :data="{
           color: getFixtureColorVals(x),
-          posX: layout['Layout 1'][x].x,
-          posY: layout['Layout 1'][x].y,
+          posX: mutLayout['Layout 1'][x].x,
+          posY: mutLayout['Layout 1'][x].y,
         }"
         :class="getClassname(x)"
-        @click="selectedFixtures.push(x)"
+        @mousedown="
+          (e) => {
+            if (!selectedFixtures.includes(x)) {
+              selectedFixtures.push(x);
+            }
+            beginDrag(e);
+          }
+        "
       />
       <selection-box
         v-if="isMultiSelectEnabled"
@@ -53,7 +60,15 @@ export default {
         x: 0,
         y: 0,
       },
+      dragging: false,
+      mutLayout: {},
+      lastX: 0,
+      lastY: 0,
     };
+  },
+  mounted() {
+    this.mutLayout = this.layout;
+    console.log(this.mutLayout);
   },
   computed: {
     fixListAsString() {
@@ -73,6 +88,15 @@ export default {
     },
   },
   methods: {
+    beginDrag() {
+      this.dragging = true;
+      const canvas = document.getElementById("canvas");
+      const x = event.clientX - canvas.offsetLeft;
+      const y = event.clientY - canvas.offsetTop;
+      const scaledCoords = this.getScaledCoords(x, y);
+      this.lastX = scaledCoords.x;
+      this.lastY = scaledCoords.y;
+    },
     isSelecting(fix) {
       const fixTop = fix.offsetTop;
       const fixLeft = fix.offsetLeft;
@@ -115,6 +139,14 @@ export default {
       );
     },
 
+    getScaledCoords(x = 0, y = 0) {
+      const SCALE_Y_RATIO = 99.5 / document.documentElement.clientHeight;
+      const SCALE_X_RATIO = 122.6 / document.documentElement.clientWidth;
+      const scalePosX = x * SCALE_X_RATIO;
+      const scalePosY = y * SCALE_Y_RATIO;
+      return { x: scalePosX, y: scalePosY };
+    },
+
     getClassname(fixtureID) {
       if (this.selectedFixtures.includes(fixtureID)) {
         return "select";
@@ -125,6 +157,7 @@ export default {
       this.isMultiSelectEnabled = false;
       this.selectStart = { x: 0, y: 0 };
       this.selectEnd = { x: 0, y: 0 };
+      this.dragging = false;
     },
     handleMouseDown(event) {
       this.isMultiSelectEnabled = true;
@@ -135,7 +168,27 @@ export default {
       this.selectEnd = { x, y };
     },
     handleMouseMove(event) {
-      if (this.isMultiSelectEnabled) {
+      if (this.dragging) {
+        const canvas = document.getElementById("canvas");
+        const x = event.clientX - canvas.offsetLeft;
+        const y = event.clientY - canvas.offsetTop;
+        const scaledCoords = this.getScaledCoords(x, y);
+        const xDiff = scaledCoords.x - this.lastX;
+        const yDiff = scaledCoords.y - this.lastY;
+        this.selectedFixtures.forEach((val) => {
+          this.mutLayout["Layout 1"][val].x += xDiff;
+          this.mutLayout["Layout 1"][val].y += yDiff;
+
+          window.ipc.send("layout", {
+            layoutName: "Layout 1",
+            fixID: val,
+            x: this.mutLayout["Layout 1"][val].x,
+            y: this.mutLayout["Layout 1"][val].y,
+          });
+        });
+        this.lastX = scaledCoords.x;
+        this.lastY = scaledCoords.y;
+      } else if (this.isMultiSelectEnabled) {
         const canvas = document.getElementById("canvas");
         const x = event.clientX - canvas.offsetLeft;
         const y = event.clientY - canvas.offsetTop;
@@ -229,6 +282,9 @@ export default {
   watch: {
     selectedColor() {
       this.handleColorChange();
+    },
+    layout() {
+      this.mutLayout = this.layout;
     },
   },
 };
