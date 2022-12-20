@@ -4,6 +4,7 @@
 
 ```
 npm install
+make install-deps
 ```
 
 You're good to go!
