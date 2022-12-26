@@ -104,6 +104,14 @@ async function createWindow() {
       `${payload.layoutName}|${payload.fixID}|${payload.x}|${payload.y}`
     );
   });
+
+  midiListener.on("message", (deltaTime, message) => {
+    handleMidiMessage(message);
+  });
+
+  midiListener.openPort(3);
+  console.log(midiListener.getPortName(3));
+
   win.on("enter-full-screen", () => {
     win.webContents.send("size", win.isFullScreen());
   });
@@ -230,13 +238,24 @@ if (isDevelopment) {
 function initBackend() {
   sendProcMessage("frate", FRAME_RATE.toString());
   sendProcMessage("uadd", "4");
-  // sendProcMessage("serial", "COM5");
+  sendProcMessage("serial", "COM5");
   sendProcMessage("artnet", "169.254.158.174");
-  // sendProcMessage("route", "COM5|0|0");
+  sendProcMessage("route", "COM5|0|0");
   sendProcMessage("route", "169.254.158.174|0|0");
+  sendProcMessage("route", "COM5|1|1");
+  sendProcMessage("route", "169.254.158.174|1|1");
 }
 
 function sendProcMessage(command, data) {
   const format = "@p!" + command + "~" + data + "\n";
   runner.stdin.write(format);
+}
+
+function handleMidiMessage(message) {
+  const messageVals = Array.from(message);
+  const action = messageVals[0];
+  const note = messageVals[1];
+  if (action === 144 && note === 60) {
+    sendProcMessage("nextcue");
+  }
 }

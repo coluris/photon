@@ -22,4 +22,4 @@ install-deps:
 build-c:
 	@-echo $(MESSAGE)
 	cd ./include/photon-deps/artnet && gcc -c *.c $(CC_ARGS)
-	g++ ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./include/photon-deps/artnet/*.o -I ./include/photon-deps $(CPP_ARGS)
+	g++ -g ./src/PhotonDMXHandler/*.cpp -o PhotonDMXHandler ./include/photon-deps/artnet/*.o -I ./include/photon-deps $(CPP_ARGS)

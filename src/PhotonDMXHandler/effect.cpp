@@ -8,6 +8,8 @@
 #include <cmath>
 #include <thread>
 #include <math.h>
+#include <random>
+#include <algorithm>
 
 std::map<std::string, Effect::E_SHAPE> Effect::shape_names{{"square", Effect::SQUARE}, {"sine", Effect::SINE}, {"ramp", Effect::RAMP}, {"sawtooth", Effect::SAW}, {"custom", Effect::CUSTOM}};
 std::map<Effect::E_SHAPE, std::string> Effect::names_of_shapes{{Effect::SQUARE, "square"}, {Effect::SINE, "sine"}, {Effect::RAMP, "ramp"}, {Effect::SAW, "sawtooth"}, {Effect::CUSTOM, "custom"}};
@@ -23,7 +25,15 @@ Effect::Effect(std::vector<Fixture *> fixList, std::string effect_type)
     this->paramList["multiplier"] = 1.0;
     this->paramList["offset"] = 100.0;
     this->paramList["phase"] = 0.0;
-    this->paramList["direction"] = 0.0;
+    this->paramList["direction"] = 1.0;
+    this->rand_fixList = fixList;
+
+    std::vector<Fixture *> rev_fix(fixList.rbegin(), fixList.rend());
+    this->rev_fixList = rev_fix;
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(this->rand_fixList.begin(), this->rand_fixList.end(), g);
 }
 
 Effect::~Effect()
@@ -55,6 +65,7 @@ void Effect::processEffect()
 
 void Effect::resolveSine(int tick)
 {
+
     float bpm = this->paramList["bpm"] * this->paramList["multiplier"];
     int f_rate = UniverseManager::getRefreshRate();
     float size = this->paramList["size"];
@@ -63,12 +74,11 @@ void Effect::resolveSine(int tick)
     int t_per_cycle = (float)f_rate / (bpm / 60.0);
     int index = 0;
     float phaseOffsetCoeff = (this->paramList["phase"] * t_per_cycle) / 360.0;
-    std::vector<Fixture *> rev_fix_vec(this->fixList.rbegin(), this->fixList.rend());
     std::vector<Fixture *> fix_vec =
         this->paramList["direction"] < 0
-            ? rev_fix_vec
-            : this->fixList;
-
+            ? this->rev_fixList
+        : this->paramList["direction"] > 0 ? this->fixList
+                                           : this->rand_fixList;
     for (Fixture *f : fix_vec)
     {
         int val = ((127.5 * size) / 100.0) * -cos((1 / ((t_per_cycle / 2) / M_PI)) * ((tick + phaseOffsetCoeff) + ((index * t_per_cycle) / num_fix))) + 255 - (127.5 * (size / 100));
@@ -90,8 +100,9 @@ void Effect::resolveSquare(int tick)
     std::vector<Fixture *> rev_fix_vec(this->fixList.rbegin(), this->fixList.rend());
     std::vector<Fixture *> fix_vec =
         this->paramList["direction"] < 0
-            ? rev_fix_vec
-            : this->fixList;
+            ? this->rev_fixList
+        : this->paramList["direction"] > 0 ? this->fixList
+                                           : this->rand_fixList;
 
     for (Fixture *f : fix_vec)
     {
@@ -114,8 +125,9 @@ void Effect::resolveRamp(int tick)
     std::vector<Fixture *> rev_fix_vec(this->fixList.rbegin(), this->fixList.rend());
     std::vector<Fixture *> fix_vec =
         this->paramList["direction"] < 0
-            ? rev_fix_vec
-            : this->fixList;
+            ? this->rev_fixList
+        : this->paramList["direction"] > 0 ? this->fixList
+                                           : this->rand_fixList;
 
     for (Fixture *f : fix_vec)
     {
@@ -138,8 +150,9 @@ void Effect::resolveSawtooth(int tick)
     std::vector<Fixture *> rev_fix_vec(this->fixList.rbegin(), this->fixList.rend());
     std::vector<Fixture *> fix_vec =
         this->paramList["direction"] < 0
-            ? rev_fix_vec
-            : this->fixList;
+            ? this->rev_fixList
+        : this->paramList["direction"] > 0 ? this->fixList
+                                           : this->rand_fixList;
 
     for (Fixture *f : fix_vec)
     {

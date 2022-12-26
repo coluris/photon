@@ -83,12 +83,14 @@ void Cue::activate()
                         if (f->getID() == fix->getID())
                         {
                             shouldDefaultValueRun = false;
+                            Logger::log("Effect found: " + a.first + " on " + f->getID(), Logger::DEBUG);
                         }
                     }
                 }
 
                 if (shouldDefaultValueRun)
                 {
+                    Logger::log("No effects found: " + a.first + " on " + f->getID(), Logger::DEBUG);
                     f->setAttribute(a.first, a.second);
                 }
             }

@@ -7,7 +7,7 @@
 using json = nlohmann::json;
 
 std::map<Fixture::ATTR_TYPES, std::string> Fixture::attr_type_names =
-    {{Fixture::INTENSITY, "in"},
+    {{Fixture::INTENSITY, "i"},
      {Fixture::RED, "r"},
      {Fixture::GREEN, "g"},
      {Fixture::BLUE, "b"},
@@ -126,6 +126,19 @@ void Fixture::outputToUniverse()
         {
             std::string attr = kvp.first;
             uint16_t val = kvp.second;
+
+            if (attr == "i")
+            {
+                continue;
+            }
+
+            if (this->channels.find("i") == this->channels.end())
+            {
+                if (attr == "r" || attr == "g" || attr == "b")
+                {
+                    val = val * ((float)this->attributes["i"] / 255);
+                }
+            }
 
             if (attr.find("_") == 0)
             {

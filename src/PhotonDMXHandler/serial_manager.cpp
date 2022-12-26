@@ -10,6 +10,7 @@
 
 SerialManager::SerialManager(std::string port, int refresh_rate)
 {
+    Logger::log(port, Logger::DEBUG);
     this->ser_serv = new SerialService(port);
     this->port_name = port;
     this->refresh_rate = refresh_rate;
@@ -84,6 +85,7 @@ SerialService::SerialService(std::string port) : io(), ser_port(io, port)
 
 SerialService::~SerialService()
 {
+    ser_port.close();
 }
 
 boost::asio::serial_port *SerialService::getSerialService()

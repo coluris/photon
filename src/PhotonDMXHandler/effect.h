@@ -39,6 +39,8 @@ public:
 private:
     std::string effect_type;
     std::vector<Fixture *> fixList;
+    std::vector<Fixture *> rev_fixList;
+    std::vector<Fixture *> rand_fixList;
     std::map<std::string, float> paramList;
     static std::map<std::string, E_SHAPE> shape_names;
     static std::map<E_SHAPE, std::string> names_of_shapes;

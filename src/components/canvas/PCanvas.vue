@@ -245,15 +245,20 @@ export default {
       const universe = parseInt(this.fixtures[fix_id]["universe"], 10) - 1;
       const channel = parseInt(this.fixtures[fix_id]["channel"], 10) - 1;
 
-      const redVal =
-        parseFloat(this.universes[universe][channel + redChannel]) *
-        parseFloat(this.universes[universe][channel + intensChannel] / 255);
-      const greenVal =
-        parseFloat(this.universes[universe][channel + greenChannel]) *
-        parseFloat(this.universes[universe][channel + intensChannel] / 255);
-      const blueVal =
-        parseFloat(this.universes[universe][channel + blueChannel]) *
-        parseFloat(this.universes[universe][channel + intensChannel] / 255);
+      let redVal = parseFloat(this.universes[universe][channel + redChannel]);
+      let greenVal = parseFloat(
+        this.universes[universe][channel + greenChannel]
+      );
+      let blueVal = parseFloat(this.universes[universe][channel + blueChannel]);
+
+      if (!Number.isNaN(intensChannel)) {
+        const intensity = parseFloat(
+          this.universes[universe][channel + intensChannel] / 255
+        );
+        redVal *= intensity;
+        greenVal *= intensity;
+        blueVal *= intensity;
+      }
       return `rgb(${redVal}, ${greenVal}, ${blueVal})`;
     },
   },
