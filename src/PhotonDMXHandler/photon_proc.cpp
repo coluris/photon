@@ -118,7 +118,6 @@ int main(int argc, char *argv[])
             size_t splitter = str_parse.find("~");
             std::string command = msg.substr(3, splitter - 3);
             std::string data = msg.substr(splitter + 1, msg.length() - splitter + 1);
-
             executeMessage(command, data);
         }
     }

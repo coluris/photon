@@ -109,8 +109,7 @@ async function createWindow() {
     handleMidiMessage(message);
   });
 
-  midiListener.openPort(3);
-  console.log(midiListener.getPortName(3));
+midiListener.openPort(0);
 
   win.on("enter-full-screen", () => {
     win.webContents.send("size", win.isFullScreen());
@@ -238,11 +237,11 @@ if (isDevelopment) {
 function initBackend() {
   sendProcMessage("frate", FRAME_RATE.toString());
   sendProcMessage("uadd", "4");
-  sendProcMessage("serial", "COM5");
+  sendProcMessage("serial", "/dev/tty.usbmodem117367601");
   sendProcMessage("artnet", "169.254.158.174");
-  sendProcMessage("route", "COM5|0|0");
+  sendProcMessage("route", "/dev/tty.usbmodem117367601|0|0");
   sendProcMessage("route", "169.254.158.174|0|0");
-  sendProcMessage("route", "COM5|1|1");
+  sendProcMessage("route", "/dev/tty.usbmodem117367601|1|1");
   sendProcMessage("route", "169.254.158.174|1|1");
 }
 
@@ -255,7 +254,8 @@ function handleMidiMessage(message) {
   const messageVals = Array.from(message);
   const action = messageVals[0];
   const note = messageVals[1];
-  if (action === 144 && note === 60) {
+  console.log(message);
+  if (action === 144 && note === 72) {
     sendProcMessage("nextcue");
   }
 }

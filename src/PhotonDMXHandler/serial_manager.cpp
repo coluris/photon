@@ -1,5 +1,9 @@
 #define _USE_MATH_DEFINES
 
+#if __APPLE__
+    #include <termios.h>
+#endif
+
 #include "serial_manager.h"
 #include "logger.h"
 #include <string>
@@ -20,11 +24,19 @@ SerialManager::SerialManager(std::string port, int refresh_rate)
 void SerialManager::begin()
 {
     Logger::log("Starting serial output on " + this->port_name, Logger::INFO);
-    this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::baud_rate(3000000));
+    
+    #if defined(WIN32)
+        this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::baud_rate(3000000));
+    #else
+        struct termios options;
+        auto nativeSerialDescriptor = this->ser_serv->getSerialService()->native_handle();
+        tcgetattr(nativeSerialDescriptor, &options);
+        cfsetspeed(&options, 3000000);
+        tcgetattr(nativeSerialDescriptor, &options);
+    #endif
     this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
     this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::character_size(8));
     this->ser_serv->getSerialService()->set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-
     this->alive = true;
 }
 
