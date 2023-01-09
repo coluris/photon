@@ -47,6 +47,7 @@ void Show::loadCuelists(json cuelists)
             for (auto effects : cue_iter.value()["effects"].items())
             {
                 std::string type = effects.value()["type"].get<std::string>();
+                std::string uuid = effects.value()["uuid"].get<std::string>();
                 float tempo = effects.value()["tempo"].get<float>();
                 std::string shape = effects.value()["shape"].get<std::string>();
                 if (shape == "custom")
@@ -65,7 +66,7 @@ void Show::loadCuelists(json cuelists)
                     Fixture *f = Show::getFixtureById(fix_id);
                     fix_list.push_back(f);
                 }
-                Effect *e = new Effect(fix_list, type);
+                Effect *e = new Effect(fix_list, type, uuid);
                 e->updateParam("size", size);
                 e->updateParam("offset", offset);
                 e->updateParam("phase", phase);
@@ -218,6 +219,7 @@ json Show::serializeCuelists()
             for (auto effect : effects)
             {
                 json effectsJSON;
+                effectsJSON["uuid"] = effect->getUUID();
                 effectsJSON["type"] = effect->getEffectType();
                 effectsJSON["tempo"] = effect->getParameter("bpm");
                 effectsJSON["shape"] = Effect::getNameFromShape(effect->getEffectShape());

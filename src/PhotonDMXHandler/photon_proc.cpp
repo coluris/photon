@@ -91,6 +91,17 @@ void executeMessage(std::string command, std::string data)
         Show::loadShowFromFile(data);
         Show::getCuelists()[0]->goToFirst();
         break;
+    case "fxedit"_:
+    {
+        std::vector<std::string> tokens = split(data, '|');
+        std::string effect_uuid = tokens.at(0);
+        std::string parameter = tokens.at(1);
+        float param_value = std::stof(tokens.at(2));
+        Effect *e = Effect::getEffectByUUID(effect_uuid);
+        Logger::log(e->getUUID(), Logger::DEBUG);
+        e->updateParam(parameter, param_value);
+        break;
+    }
     case "nextcue"_:
         Show::getCuelists()[0]->nextCue();
         break;

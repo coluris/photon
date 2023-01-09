@@ -2,10 +2,6 @@
   <div
     class="canvas"
     id="canvas"
-    @mousedown.self="handleMouseDown"
-    @mouseup="handleMouseUp"
-    @mousemove="handleMouseMove"
-    @mouseleave.self="handleMouseUp"
   >
     <div class="fixtures" v-if="fixtures">
       <fixture-item
@@ -14,25 +10,10 @@
         :id="x"
         :data="{
           color: getFixtureColorVals(x),
-          posX: mutLayout['Layout 1'][x].x,
-          posY: mutLayout['Layout 1'][x].y,
+          posX: this.layout['Layout 1'][x].x,
+          posY: this.layout['Layout 1'][x].y,
         }"
-        :class="getClassname(x)"
-        @mousedown="
-          (e) => {
-            if (!selectedFixtures.includes(x)) {
-              selectedFixtures.push(x);
-            }
-            beginDrag(e);
-          }
-        "
-      />
-      <selection-box
-        v-if="isMultiSelectEnabled"
-        :start-x="selectStart.x"
-        :start-y="selectStart.y"
-        :end-x="selectEnd.x"
-        :end-y="selectEnd.y"
+        @created="updateFixtureSelectable"
       />
     </div>
   </div>
@@ -40,35 +21,48 @@
 
 <script>
 import FixtureItem from "../items/FixtureItem";
-import SelectionBox from "../tools/SelectionBox";
+import DragSelect from "dragselect";
 
 export default {
   name: "PCanvas",
   components: {
     FixtureItem,
-    SelectionBox,
   },
   data() {
     return {
       selectedFixtures: [],
-      isMultiSelectEnabled: false,
-      selectStart: {
-        x: 0,
-        y: 0,
-      },
-      selectEnd: {
-        x: 0,
-        y: 0,
-      },
       dragging: false,
       mutLayout: {},
       lastX: 0,
       lastY: 0,
+      ds: null,
     };
   },
   mounted() {
     this.mutLayout = this.layout;
-    console.log(this.mutLayout);
+     this.ds = new DragSelect({
+      selectables: document.querySelectorAll('.fix'),
+      area: document.querySelector('#canvas'),
+    });
+    this.ds.subscribe('callback', (e) => {
+      const canvas = document.getElementById('canvas');
+      const canvBounds = canvas.getBoundingClientRect();
+      this.selectedFixtures.forEach((val) => {
+        const fixture = document.getElementById(val);
+        const fixBounds = fixture.getBoundingClientRect();
+        const leftPercent = (fixBounds.x - canvBounds.left) / canvBounds.width;
+        const topPercent = (fixBounds.y - canvBounds.top) / canvBounds.height;
+        this.mutLayout["Layout 1"][val].x = leftPercent * 100;
+        this.mutLayout["Layout 1"][val].y = topPercent * 100;
+            window.ipc.send("layout", {
+            layoutName: "Layout 1",
+            fixID: val,
+            x: this.mutLayout["Layout 1"][val].x,
+            y: this.mutLayout["Layout 1"][val].y,
+          });
+        });
+        this.selectedFixtures = e.items.map(fix => fix.id);
+    });
   },
   computed: {
     fixListAsString() {
@@ -78,138 +72,10 @@ export default {
       }
       return output;
     },
-    selectionBox() {
-      return {
-        top: Math.min(this.selectStart.y, this.selectEnd.y),
-        bottom: Math.max(this.selectStart.y, this.selectEnd.y),
-        left: Math.min(this.selectStart.x, this.selectEnd.x),
-        right: Math.max(this.selectStart.x, this.selectEnd.x),
-      };
-    },
   },
   methods: {
-    beginDrag() {
-      this.dragging = true;
-      const canvas = document.getElementById("canvas");
-      const x = event.clientX - canvas.offsetLeft;
-      const y = event.clientY - canvas.offsetTop;
-      const scaledCoords = this.getScaledCoords(x, y);
-      this.lastX = scaledCoords.x;
-      this.lastY = scaledCoords.y;
-    },
-    isSelecting(fix) {
-      const fixTop = fix.offsetTop;
-      const fixLeft = fix.offsetLeft;
-      const fixBottom = fixTop + fix.offsetHeight;
-      const fixRight = fixLeft + fix.offsetWidth;
-      const selTop = this.selectionBox.top;
-      const selLeft = this.selectionBox.left;
-      const selBottom = this.selectionBox.bottom;
-      const selRight = this.selectionBox.right;
-
-      return (
-        (fixTop >= selTop &&
-          fixLeft >= selLeft &&
-          fixBottom <= selBottom &&
-          fixRight <= selRight) || // completely inside
-        (fixBottom >= selTop &&
-          fixTop < selTop &&
-          fixRight > selLeft &&
-          fixLeft < selRight) || // partially above
-        (fixTop <= selBottom &&
-          fixBottom > selBottom &&
-          fixRight > selLeft &&
-          fixLeft < selRight) || // partially below
-        (fixRight >= selLeft &&
-          fixLeft < selLeft &&
-          fixBottom > selTop &&
-          fixTop < selBottom) || // partially to the left
-        (fixLeft <= selRight &&
-          fixRight > selRight &&
-          fixBottom > selTop &&
-          fixTop < selBottom) || // partially to the right
-        (fixTop < selTop &&
-          fixBottom > selBottom &&
-          fixLeft < selLeft &&
-          fixRight > selRight) || // spans entire width, but top and bottom are above and below
-        (fixLeft < selLeft &&
-          fixRight > selRight &&
-          fixTop < selTop &&
-          fixBottom > selBottom) // spans entire height, but left and right are left and right of selection box
-      );
-    },
-
-    getScaledCoords(x = 0, y = 0) {
-      const SCALE_Y_RATIO = 99.5 / document.documentElement.clientHeight;
-      const SCALE_X_RATIO = 122.6 / document.documentElement.clientWidth;
-      const scalePosX = x * SCALE_X_RATIO;
-      const scalePosY = y * SCALE_Y_RATIO;
-      return { x: scalePosX, y: scalePosY };
-    },
-
-    getClassname(fixtureID) {
-      if (this.selectedFixtures.includes(fixtureID)) {
-        return "select";
-      }
-      return "";
-    },
-    handleMouseUp() {
-      this.isMultiSelectEnabled = false;
-      this.selectStart = { x: 0, y: 0 };
-      this.selectEnd = { x: 0, y: 0 };
-      this.dragging = false;
-    },
-    handleMouseDown(event) {
-      this.isMultiSelectEnabled = true;
-      const canvas = document.getElementById("canvas");
-      const x = event.clientX - canvas.offsetLeft;
-      const y = event.clientY - canvas.offsetTop;
-      this.selectStart = { x, y };
-      this.selectEnd = { x, y };
-    },
-    handleMouseMove(event) {
-      if (this.dragging) {
-        const canvas = document.getElementById("canvas");
-        const x = event.clientX - canvas.offsetLeft;
-        const y = event.clientY - canvas.offsetTop;
-        const scaledCoords = this.getScaledCoords(x, y);
-        const xDiff = scaledCoords.x - this.lastX;
-        const yDiff = scaledCoords.y - this.lastY;
-        this.selectedFixtures.forEach((val) => {
-          this.mutLayout["Layout 1"][val].x += xDiff;
-          this.mutLayout["Layout 1"][val].y += yDiff;
-
-          window.ipc.send("layout", {
-            layoutName: "Layout 1",
-            fixID: val,
-            x: this.mutLayout["Layout 1"][val].x,
-            y: this.mutLayout["Layout 1"][val].y,
-          });
-        });
-        this.lastX = scaledCoords.x;
-        this.lastY = scaledCoords.y;
-      } else if (this.isMultiSelectEnabled) {
-        const canvas = document.getElementById("canvas");
-        const x = event.clientX - canvas.offsetLeft;
-        const y = event.clientY - canvas.offsetTop;
-        this.selectEnd = { x, y };
-        this.computeMultiSelectFixtures(event);
-      }
-    },
-    computeMultiSelectFixtures(event) {
-      const fixtures = document.getElementsByClassName("fix");
-      const selected = [];
-      for (const fix of fixtures) {
-        if (this.isSelecting(fix)) {
-          selected.push(fix.id);
-        }
-      }
-      if (event.ctrlKey) {
-        const mergedSet = new Set(selected.concat(this.selectedFixtures));
-        this.selectedFixtures = Array.from(mergedSet);
-      } else {
-        this.selectedFixtures = selected;
-      }
+    updateFixtureSelectable() {
+      this.ds.addSelectables(document.querySelectorAll('.fix'));
     },
     handleColorChange() {
       const red = parseInt(this.selectedColor.substring(1, 3), 16);
@@ -296,6 +162,10 @@ export default {
 </script>
 
 <style>
+
+* { user-select: none; }
+
+
 .canvas {
   height: 100%;
   width: 100%;
@@ -305,6 +175,7 @@ export default {
   border-radius: 10px;
   height: 100%;
   width: 75%;
+  overflow: none;
 }
 
 .display {
@@ -312,5 +183,33 @@ export default {
   height: 100%;
   border-radius: 25px;
   background-color: white;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  width: 5px;
+  height: 5px;
+  background: #00000000;
+}
+
+::-webkit-scrollbar-corner {
+  background: #00000000;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
 }
 </style>

@@ -6,7 +6,7 @@ node_modules
 /Fixtures
 /Shows
 /include
-
+/PhotonDMXHandler.dSYM
 # local env files
 .env.local
 .env.*.local

@@ -104,6 +104,13 @@ async function createWindow() {
       `${payload.layoutName}|${payload.fixID}|${payload.x}|${payload.y}`
     );
   });
+  ipcMain.on("fxedit", (event, payload) => {
+        const effect_id = payload.id;
+        const param = payload.param;
+        const value = payload.value;
+        sendProcMessage("fxedit",
+        `${effect_id}|${param}|${value}`);
+        });
 
   midiListener.on("message", (deltaTime, message) => {
     handleMidiMessage(message);
@@ -237,11 +244,11 @@ if (isDevelopment) {
 function initBackend() {
   sendProcMessage("frate", FRAME_RATE.toString());
   sendProcMessage("uadd", "4");
-  sendProcMessage("serial", "/dev/tty.usbmodem117367601");
+  // sendProcMessage("serial", "/dev/tty.usbmodem117367601");
   sendProcMessage("artnet", "169.254.158.174");
-  sendProcMessage("route", "/dev/tty.usbmodem117367601|0|0");
+  // sendProcMessage("route", "/dev/tty.usbmodem117367601|0|0");
   sendProcMessage("route", "169.254.158.174|0|0");
-  sendProcMessage("route", "/dev/tty.usbmodem117367601|1|1");
+  // sendProcMessage("route", "/dev/tty.usbmodem117367601|1|1");
   sendProcMessage("route", "169.254.158.174|1|1");
 }
 

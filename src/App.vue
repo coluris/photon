@@ -25,6 +25,7 @@
         </div>
         <div class="main-region-bottom-col">
           <color-picker @color="handleColorChange" />
+          <input type="number" v-model="testBPM" @change="changeBPM"/>
         </div>
       </div>
     </div>
@@ -60,20 +61,16 @@ export default {
       },
       universes: {},
       selectedColor: "#FFFFFF",
+      testBPM: 60,
     };
   },
   methods: {
-    selectFixture(e) {
-      e.preventDefault();
-      e.currentTarget.classList.add("select");
-    },
-    selectCanvas(e) {
-      e.preventDefault();
-      this.$refs.fix.forEach((item) => item.$el.classList.remove("select"));
-    },
     handleColorChange(color) {
       this.selectedColor = color;
     },
+    changeBPM(){
+      window.ipc.send("fxedit", {id: "494214d0-e54b-41c3-b25c-e1bf3269f819", param: "bpm", value: this.testBPM});
+    }
   },
 
   beforeMount() {

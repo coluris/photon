@@ -10,7 +10,7 @@ class Effect
 {
 
 public:
-    Effect(std::vector<Fixture *> fixList, std::string effect_type);
+    Effect(std::vector<Fixture *> fixList, std::string effect_type, std::string uuid);
     ~Effect();
     void updateFixtures(std::vector<Fixture *> fixList);
     bool updateParam(std::string param, float val);
@@ -20,6 +20,8 @@ public:
     void resolveRamp(int tick);
     void resolveSawtooth(int tick);
     void resolveCustom(int tick);
+    static Effect* getEffectByUUID(std::string uuid);
+    std::string getUUID();
     std::string getEffectType();
     std::vector<Fixture *> getFixtureList();
     float getParameter(std::string param);
@@ -44,7 +46,9 @@ private:
     std::map<std::string, float> paramList;
     static std::map<std::string, E_SHAPE> shape_names;
     static std::map<E_SHAPE, std::string> names_of_shapes;
+    static std::map<std::string, Effect *> effect_pool;
     E_SHAPE effect_shape;
     int currentExtension;
     int getNumExtensions();
+    std::string uuid;
 };
